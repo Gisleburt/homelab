@@ -1,0 +1,8 @@
+---
+- name: All Pis
+  hosts: k8s
+  become: yes
+
+  roles:
+    - swapless
+    - poe

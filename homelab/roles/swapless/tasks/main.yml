@@ -1,0 +1,6 @@
+---
+# tasks file for swapless
+- name: Disable swap
+  ansible.builtin.shell:
+    removes: /var/swap
+    cmd: dphys-swapfile swapoff && dphys-swapfile uninstall && update-rc.d dphys-swapfile remove

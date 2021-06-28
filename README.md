@@ -41,6 +41,14 @@ You need to do a couple of things to prepare.
 
 ## Commands
 
-# `make build.ansible`
+Make commands will use empty files in `build/` to keep track of changes 
 
-Creates the ansible docker image that will be used to run ansible playbooks.
+### `make build/cluster`
+
+The only cammand you'll really need, once the [Preparation](#Preparation) steps are complete. It
+will set up the PoE hat, remove the swap file, and (todo) install the appropriate services.
+
+### `make build/ansible`
+
+Creates the ansible docker image that will be used to run ansible playbooks. This is run
+automatically but `build/cluster` so there is no need to run it separately.
