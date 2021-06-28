@@ -36,6 +36,7 @@ You need to do a couple of things to prepare.
    [k8s:vars]
    ansible_ssh_user=pi
    ansible_ssh_private_key_file=~/.ssh/pi-k8s
+   ansible_python_interpreter=/usr/bin/python3
    ```
 
 ## Commands
