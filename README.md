@@ -1,4 +1,4 @@
-# Home lab kubernetes configurator
+# Home lab configurator
 
 A set of tools to build my home lab kubernetes cluster on any number of raspberry pis.
 
