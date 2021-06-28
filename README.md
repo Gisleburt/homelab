@@ -2,7 +2,7 @@
 
 A set of tools to build my home lab kubernetes cluster on any number of raspberry pis.
 
-The pi's in the cluster run Ubuntu LTS (20.04 at time of writing). Each machine needs to be
+The pi's in the cluster run RaspiOS Lite (32bit at time of writing). Each machine needs to be
 initially configured with a shell script to prepare it for ansible. This script copies over a public
 ssh key, and sets the hostname. After that set up is managed through ansible. 
 
@@ -17,7 +17,7 @@ You need to do a couple of things to prepare.
 2. Run the prepare-host.sh file in the `prepare` folder with the IP address of the pi, the new
    hostname and the location of your ssh public key. Eg
    ```
-   ./prepare/prepare-host.sh 10.4.0.100 k8s-master-001 ~/.ssh/id_rsa
+   ./prepare/prepare-host.sh 10.4.0.100 k8s-master-100 ~/.ssh/id_rsa
    ```
 3. Finally, you will need to create a `hosts` file in this directory. This is ignored by git, but
    it should look like the following, but change your IP addresses and keyfile name as required:
@@ -34,7 +34,7 @@ You need to do a couple of things to prepare.
    nodes
    
    [k8s:vars]
-   ansible_ssh_user=ubuntu
+   ansible_ssh_user=pi
    ansible_ssh_private_key_file=~/.ssh/pi-k8s
    ```
 

@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
+set -eufo pipefail
+
+SSH_USER=pi
 
 IP=$1
 IP_REGEX='^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$'
@@ -28,14 +31,14 @@ fi
 echo "╔═════════════════╗"
 echo "║ Copying Keyfile ║"
 echo "╚═════════════════╝"
-ssh-copy-id -i $SSH_KEY ubuntu@$IP
+ssh-copy-id -i $SSH_KEY $SSH_USER@$IP
 
 echo "╔══════════════════╗"
 echo "║ Setting Hostname ║"
 echo "╚══════════════════╝"
-ssh -t ubuntu@$IP "sudo hostnamectl set-hostname $NEW_HOSTNAME"
+ssh -t $SSH_USER@$IP "sudo hostnamectl set-hostname $NEW_HOSTNAME"
 
 echo "╔════════════╗"
 echo "║ Restarting ║"
 echo "╚════════════╝"
-ssh -t ubuntu@$IP "sudo shutdown -r 0"
+ssh -t $SSH_USER@$IP "sudo shutdown -r 0"
