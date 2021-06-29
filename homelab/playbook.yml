@@ -15,6 +15,7 @@
   roles:
     - swapless
     - poe
+    - cgroups
 
   handlers:
     - name: restart pi
