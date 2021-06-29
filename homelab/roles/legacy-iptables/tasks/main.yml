@@ -1,0 +1,15 @@
+---
+# tasks file for legacy-iptables
+- name: Detect which iptables
+  command: iptables --version
+  register: iptables_version
+  changed_when: false
+
+- name: "Set legacy tables"
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - iptables -F
+    - update-alternatives --set iptables /usr/sbin/iptables-legacy
+    - update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+  when: not "legacy" in iptables_version.stdout
+  notify: restart pi

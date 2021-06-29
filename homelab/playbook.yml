@@ -16,6 +16,7 @@
     - swapless
     - poe
     - cgroups
+    - legacy-iptables
 
   handlers:
     - name: restart pi
