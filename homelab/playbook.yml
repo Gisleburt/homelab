@@ -6,3 +6,8 @@
   roles:
     - swapless
     - poe
+
+  handlers:
+    - name: restart pi
+      reboot:
+        reboot_timeout: 120
