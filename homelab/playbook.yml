@@ -3,6 +3,15 @@
   hosts: k8s
   become: yes
 
+  pre_tasks:
+    - name: Update repo cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade installed software
+      apt:
+        upgrade: safe
+
   roles:
     - swapless
     - poe

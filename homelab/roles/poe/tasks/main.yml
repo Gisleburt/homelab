@@ -1,13 +1,5 @@
 ---
 # tasks file for poe
-- name: Update repo cache
-  apt:
-    update_cache: yes
-
-- name: Update installed software
-  apt:
-    upgrade: safe
-
 - name: Fan Config
   ansible.builtin.template:
     src: boot-config.txt
@@ -15,9 +7,4 @@
     owner: root
     group: root
     mode: u=rw
-  register: bootConfig
-
-- name: Reboot pi
-  reboot:
-    reboot_timeout: 120
-  when: bootConfig.changed
+  notify: restart pi
