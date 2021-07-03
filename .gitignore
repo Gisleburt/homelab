@@ -1,3 +1,4 @@
 # Created by .ignore support plugin (hsz.mobi)
 build
 hosts
+k3s-config.yaml

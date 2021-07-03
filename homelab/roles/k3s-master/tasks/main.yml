@@ -20,6 +20,9 @@
   set_fact:
     node_token: "{{ node_token['content'] }}"
 
-- name: See token
-  debug:
-    var: hostvars['10.4.0.100']['node_token']
+- name: Get config
+  become: yes
+  fetch:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: ../k3s-config.yaml
+    flat: yes
