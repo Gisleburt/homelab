@@ -1,0 +1,25 @@
+---
+# tasks file for k3s-master
+- name: start master
+  shell: ~/k3s server
+  async: 10
+  poll: 0
+
+- name: Wait for server start
+  become: yes
+  wait_for:
+    path: /var/lib/rancher/k3s/server/node-token
+
+- name: Get token
+  become: yes
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: node_token
+
+- name: Save contents
+  set_fact:
+    node_token: "{{ node_token['content'] }}"
+
+- name: See token
+  debug:
+    var: hostvars['10.4.0.100']['node_token']

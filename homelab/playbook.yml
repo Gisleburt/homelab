@@ -18,8 +18,21 @@
     - poe
     - cgroups
     - legacy-iptables
+    - k3s-download
 
   handlers:
     - name: restart pi
       reboot:
         reboot_timeout: 120
+
+- name: k8s-master
+  hosts: masters
+
+  roles:
+    - k3s-master
+
+- name: k8s-node
+  hosts: nodes
+
+  roles:
+    - k3s-node

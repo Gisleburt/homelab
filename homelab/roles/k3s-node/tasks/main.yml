@@ -1,0 +1,4 @@
+---
+# tasks file for k3s-nodes
+- name: start nodes
+  shell: ~/k3s agent --server https://10.4.0.100:6443 --token {{ hostvars['10.4.0.100']['node_token'] }} &
