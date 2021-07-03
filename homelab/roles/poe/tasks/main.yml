@@ -1,7 +1,8 @@
 ---
 # tasks file for poe
 - name: Fan Config
-  ansible.builtin.template:
+  become: yes
+  template:
     src: boot-config.txt
     dest: /boot/config.txt
     owner: root

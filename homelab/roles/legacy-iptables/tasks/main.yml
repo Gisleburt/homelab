@@ -1,12 +1,14 @@
 ---
 # tasks file for legacy-iptables
 - name: Detect which iptables
+  become: yes
   command: iptables --version
   register: iptables_version
   changed_when: false
 
 - name: "Set legacy tables"
-  ansible.builtin.command: "{{ item }}"
+  become: yes
+  command: "{{ item }}"
   loop:
     - iptables -F
     - update-alternatives --set iptables /usr/sbin/iptables-legacy

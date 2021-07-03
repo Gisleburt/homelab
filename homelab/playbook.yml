@@ -1,14 +1,15 @@
 ---
 - name: All Pis
   hosts: k8s
-  become: yes
 
   pre_tasks:
     - name: Update repo cache
+      become: yes
       apt:
         update_cache: yes
 
     - name: Upgrade installed software
+      become: yes
       apt:
         upgrade: safe
 
