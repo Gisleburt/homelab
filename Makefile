@@ -16,7 +16,17 @@ build/cluster: build/ansible homelab/* homelab/*/* homelab/*/*/* homelab/*/*/*
 	  ${ANSIBLE} \
 	  ansible-playbook -i hosts homelab/playbook.yml
 	@mkdir -p build
-	@touch build/ansible
+	@touch build/cluster
+
+build/dashboard: services/kubernetes-web-ui/*.yml
+	@echo Installing Dashboard
+	@GITHUB_URL=https://github.com/kubernetes/dashboard/releases
+	@VERSION_KUBE_DASHBOARD=$(curl -w '%{url_effective}' -I -L -s -S ${GITHUB_URL}/latest -o /dev/null | sed -e 's|.*/||')
+	@kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/${VERSION_KUBE_DASHBOARD}/aio/deploy/recommended.yaml
+	@kubectl apply -f services/kubernetes-web-ui/*.yml
+	@touch build/dashboard
+
+run/dashboard: build/dashboard
 
 ansible.test: build/ansible
 	@echo Pinging all k8s masters and nodes
