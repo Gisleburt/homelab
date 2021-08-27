@@ -23,6 +23,7 @@
 
   handlers:
     - name: restart pi
+      become: yes
       reboot:
         reboot_timeout: 120
 
