@@ -1,11 +1,45 @@
 ---
 # tasks file for poe
-- name: Fan Config
+- name: Set DT Overlay
   become: yes
-  template:
-    src: boot-config.txt
-    dest: /boot/config.txt
-    owner: root
-    group: root
-    mode: u=rw
+  lineinfile:
+    path: /boot/config.txt
+    line: dtoverlay=rpi-poe
+    regex: '^dtoverlay='
+  notify: restart pi
+
+- name: Set DT Overlay
+  become: yes
+  lineinfile:
+    path: /boot/config.txt
+    line: dtparam=poe_fan_temp0=57000
+    regex: '^dtparam=poe_fan_temp0='
+    insertafter: '^dtoverlay=.*'
+  notify: restart pi
+
+- name: Set DT Overlay
+  become: yes
+  lineinfile:
+    path: /boot/config.txt
+    line: dtparam=poe_fan_temp1=60000
+    regex: '^dtparam=poe_fan_temp1='
+    insertafter: '^dtparam=poe_fan_temp0=.*'
+  notify: restart pi
+
+- name: Set DT Overlay
+  become: yes
+  lineinfile:
+    path: /boot/config.txt
+    line: dtparam=poe_fan_temp2=63000
+    regex: '^dtparam=poe_fan_temp2='
+    insertafter: '^dtparam=poe_fan_temp1=.*'
+  notify: restart pi
+
+- name: Set DT Overlay
+  become: yes
+  lineinfile:
+    path: /boot/config.txt
+    line: dtparam=poe_fan_temp3=66000
+    regex: '^dtparam=poe_fan_temp3='
+    insertafter: '^dtparam=poe_fan_temp2=.*'
   notify: restart pi
