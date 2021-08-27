@@ -1,0 +1,8 @@
+---
+# tasks file for 64bit
+- name: Enable 64bit kernal
+  become: yes
+  lineinfile:
+    path: /boot/config.txt
+    line: arm_64bit=1
+  notify: restart pi

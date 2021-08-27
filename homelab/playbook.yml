@@ -14,6 +14,7 @@
         upgrade: safe
 
   roles:
+    - 64bit
     - swapless
     - poe
     - cgroups
@@ -25,12 +26,14 @@
       reboot:
         reboot_timeout: 120
 
+###
 - name: k8s-master
   hosts: masters
 
   roles:
     - k3s-master
 
+###
 - name: k8s-node
   hosts: nodes
 
