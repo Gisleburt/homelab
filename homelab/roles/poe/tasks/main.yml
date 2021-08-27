@@ -8,7 +8,7 @@
     regex: '^dtoverlay='
   notify: restart pi
 
-- name: Set DT Overlay
+- name: Set temp 0
   become: yes
   lineinfile:
     path: /boot/config.txt
@@ -17,7 +17,7 @@
     insertafter: '^dtoverlay=.*'
   notify: restart pi
 
-- name: Set DT Overlay
+- name: Set temp 1
   become: yes
   lineinfile:
     path: /boot/config.txt
@@ -26,7 +26,7 @@
     insertafter: '^dtparam=poe_fan_temp0=.*'
   notify: restart pi
 
-- name: Set DT Overlay
+- name: Set temp 2
   become: yes
   lineinfile:
     path: /boot/config.txt
@@ -35,7 +35,7 @@
     insertafter: '^dtparam=poe_fan_temp1=.*'
   notify: restart pi
 
-- name: Set DT Overlay
+- name: Set temp 3
   become: yes
   lineinfile:
     path: /boot/config.txt
