@@ -18,6 +18,9 @@ build/cluster: build/ansible homelab/* homelab/*/* homelab/*/*/* homelab/*/*/*
 	@mkdir -p build
 	@touch build/cluster
 
+build/kubectl: tools/kubectl/*
+	@echo Building kubectl docker image
+
 build/dashboard: services/kubernetes-web-ui/*.yml
 	@echo Installing Dashboard
 	@GITHUB_URL=https://github.com/kubernetes/dashboard/releases
