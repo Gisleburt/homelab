@@ -38,3 +38,24 @@ ansible.test: build/ansible
 	  -v "${PWD}:/ansible" \
 	  ${ANSIBLE} \
 	  ansible -i hosts -m ping k8s
+
+run/gitlab-runner: build/kubectl
+	@echo Starting github runner
+	@docker run --rm -it \
+      -v "${PWD}/k3s-config.yaml":/root/.kube/config \
+      -v "${PWD}":/home \
+      gisleburt/kubectl \
+        kubectl apply -f services/gitlab-runner/namespace.yaml
+	@docker run --rm -it \
+	  -v "${PWD}/k3s-config.yaml":/root/.kube/config \
+	  -v "${PWD}/tools/helm-cache":/root/.cache/helm \
+	  -v "${PWD}":/home \
+	  gisleburt/kubectl \
+	    sh -c \
+	    "helm repo add gitlab https://charts.gitlab.io && \
+	    helm repo update && \
+	    helm install \
+	      --namespace gitlab \
+	      gitlab-runner \
+	      -f services/gitlab-runner/values.yaml \
+	      gitlab/gitlab-runner"
