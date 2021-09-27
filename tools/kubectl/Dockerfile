@@ -1,18 +1,17 @@
-FROM alpine:3
+FROM alpine:3 as kubectl
 
 WORKDIR /tmp
 
 RUN apk add curl # sha256sum
 
-# Get binary
-RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+### kubectl
 
-# Checksum binary
-#RUN curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
-#RUN echo "$(<kubectl.sha256) kubectl" | sha256sum --check
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+ && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl \
+ && rm kubectl
 
-RUN install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+### heml
 
-WORKDIR /kubectl
+RUN curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | VERIFY_CHECKSUM=false sh
 
-CMD ["/kubectl/kubectl"]
+WORKDIR /home
