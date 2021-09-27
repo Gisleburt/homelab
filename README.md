@@ -11,15 +11,35 @@ ansible.
 
 ## Preparation
 
-You need to do a couple of things to prepare.
-1. Make sure your Pis are assigned static IP addresses by your router.
+### You will need:
+
+1. At least 2 Raspberry Pis (v4+ with at least 4GB of memory are preferable, but v3s should work)
+2. A Micro SD card for each Pi
+3. A PoE+ hat and ethernet cable for each Pi
+4. A switch that can deliver PoE+
+
+If you can not get PoE+ hats and a PoE+ switch, you can do this over WiFi, however this will impact
+performance and will require some set up steps we're not covering in this guide. You will also need
+to comment out the `poe` role in the ansible setup.
+
+### To prepare your Raspberry Pis
+
+1. Download the [Raspberry Pi Imager](https://www.raspberrypi.org/software/)
+2. Flash your Micro SD cards with Raspberry Pi OS Lite 32 bit  
+   Note: hopefully one day a 64 bit version will exist, and we can remove some steps from ansible
+3. After flashing each Micro SD card, reinsert it into your computer and add an empty `ssh` file to
+   the root of the filesystem
+
+### Once you have connected your Pis to the switch
+
+1. Make sure that your Pis have been assigned static IP addresses by your router
 2. Make a new ssh key file without a password, you'll use this in the next step 
-2. Run the prepare-host.sh file in the `prepare` folder with the IP address of the pi, the new
+3. Run the prepare-host.sh file in the `prepare` folder with the IP address of the pi, the new
    hostname and the location of your ssh public key. Eg
    ```
    ./prepare/prepare-host.sh 10.4.0.100 k8s-master-100 ~/.ssh/id_rsa
    ```
-3. Finally, you will need to create a `hosts` file in this directory. This is ignored by git, but
+4. Finally, you will need to create a `hosts` file in this directory. This is ignored by git, but
    it should look like the following, but change your IP addresses and keyfile name as required:
    ```
    [masters]
