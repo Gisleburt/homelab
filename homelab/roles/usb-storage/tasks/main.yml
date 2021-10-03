@@ -1,0 +1,9 @@
+---
+# mount the usb drive
+- name: Add usb storage
+  become: yes
+  mount:
+    state: mounted
+    path: /mnt/usb-device
+    src: /dev/sda1
+    fstype: exfat

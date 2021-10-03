@@ -41,7 +41,7 @@ to comment out the `poe` role in the ansible setup.
    ```
 4. Finally, you will need to create a `hosts` file in this directory. This is ignored by git, but
    it should look like the following, but change your IP addresses and keyfile name as required:
-   ```
+   ```ini
    [masters]
    10.4.0.100
    
@@ -52,6 +52,9 @@ to comment out the `poe` role in the ansible setup.
    [k8s:children]
    masters
    nodes
+   
+   [storage_provider]
+   10.4.0.101
    
    [k8s:vars]
    ansible_ssh_user=pi
