@@ -20,6 +20,13 @@
   set_fact:
     node_token: "{{ node_token['content'] }}"
 
+- name: Modify config
+  become: yes
+  replace:
+    path: /etc/rancher/k3s/k3s.yaml
+    regexp: '127\.0\.0\.1'
+    replace: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+
 - name: Get config
   become: yes
   fetch:

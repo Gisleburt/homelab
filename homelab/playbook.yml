@@ -40,3 +40,11 @@
 
   roles:
     - k3s-node
+
+###
+- name: storage-provider
+  hosts: storage_provider
+
+  roles:
+    - storage-usb
+    - storage-provider

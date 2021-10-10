@@ -58,7 +58,7 @@ runnerRegistrationToken: "<INSERT TOKEN HERE!!!>"
 ## non-existant runners. Un-registering the runner before termination mitigates this issue.
 ## ref: https://docs.gitlab.com/runner/commands/README.html#gitlab-runner-unregister
 ##
-# unregisterRunners: true
+unregisterRunners: true
 
 ## When stopping the runner, give it time to wait for its jobs to terminate.
 ##
