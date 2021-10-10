@@ -46,4 +46,5 @@
   hosts: storage_provider
 
   roles:
-    - usb-storage
+    - storage-usb
+    - storage-provider
