@@ -11,4 +11,20 @@
       name: "{{ hostvars[inventory_hostname]['ansible_hostname'] }}"
       metadata:
         labels:
-          storage-provider: ""
+          storage-provider: "930Gi"
+
+- name: Create Storage Namespace
+  delegate_to: localhost
+  k8s:
+    kubeconfig: ../k3s-config.yaml
+    state: present
+    definition: "{{ item }}"
+  loop: "{{ lookup('template', '1.storage-namespace.yaml') | from_yaml_all }}"
+
+- name: Create the NFS Service
+  delegate_to: localhost
+  k8s:
+    kubeconfig: ../k3s-config.yaml
+    state: present
+    definition: "{{ item }}"
+  loop: "{{ lookup('template', '2.storage-service.yaml') | from_yaml_all }}"
