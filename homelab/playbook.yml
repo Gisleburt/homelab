@@ -4,12 +4,12 @@
 
   pre_tasks:
     - name: Update repo cache
-      become: yes
+      become: true
       apt:
         update_cache: yes
 
     - name: Upgrade installed software
-      become: yes
+      become: true
       apt:
         upgrade: safe
 
@@ -20,10 +20,11 @@
     - cgroups
     - legacy-iptables
     - k3s-download
+    - nfs-common
 
   handlers:
     - name: restart pi
-      become: yes
+      become: true
       reboot:
         reboot_timeout: 120
 

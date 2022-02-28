@@ -39,11 +39,14 @@ spec:
 
 ---
 apiVersion: apps/v1
-kind: DaemonSet
+kind: Deployment
 metadata:
   name: local-server-nfs
   namespace: storage
+  labels:
+    role: local-server-nfs
 spec:
+  replicas: 1
   selector:
     matchLabels:
       name: local-server-nfs
@@ -51,6 +54,7 @@ spec:
     metadata:
       labels:
         name: local-server-nfs
+        role: local-server-nfs
     spec:
       nodeSelector:
         storage-provider: "930Gi"
@@ -63,10 +67,6 @@ spec:
           ports:
             - name: nfs
               containerPort: 2049
-#            - name: mountd
-#              containerPort: 20048
-#            - name: rpcbind
-#              containerPort: 111
           securityContext:
             capabilities:
               add: ["SYS_ADMIN", "SETPCAP"]
@@ -85,12 +85,9 @@ metadata:
   name: local-server-nfs
   namespace: storage
 spec:
+  clusterIP: 10.43.20.49 # Unfortunately Kubernetes doesn't look at KubeDNS when setting up NFS volumes so we have to specify it here
   ports:
     - name: nfs
       port: 2049
-    - name: mountd
-      port: 20048
-    - name: rpcbind
-      port: 111
   selector:
-    role: nfs-server
+    role: local-server-nfs

@@ -1,0 +1,131 @@
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: nfs-provisioner-sa
+  namespace: storage
+  labels:
+    app: nfs-provisioner
+---
+kind: ClusterRole # Role of kubernetes
+apiVersion: rbac.authorization.k8s.io/v1 # auth API
+metadata:
+  name: nfs-provisioner-cr
+  namespace: storage
+  labels:
+    app: nfs-provisioner
+rules:
+  - apiGroups: [""] # rules on persistentvolumes
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "update", "patch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: nfs-provisioner-crb
+  namespace: storage
+  labels:
+    app: nfs-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: nfs-provisioner-sa # defined on top of file
+    namespace: storage
+roleRef: # binding cluster role to service account
+  kind: ClusterRole
+  name: nfs-provisioner-cr # name defined in clusterRole
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: nfs-provisioner-r
+  namespace: storage
+  labels:
+    app: nfs-provisioner
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: nfs-provisioner-rb
+  namespace: storage
+  labels:
+    app: nfs-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: nfs-provisioner-sa # same as top of the file
+    # replace with namespace where provisioner is deployed
+    namespace: storage
+roleRef:
+  kind: Role
+  name: nfs-provisioner-r
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-provisioner
+  labels:
+    app: nfs-provisioner
+  namespace: storage
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nfs-provisioner
+  template:
+    metadata:
+      labels:
+        app: nfs-provisioner
+    spec:
+      serviceAccountName: nfs-provisioner-sa
+      containers:
+        - name: nfs-provisioner
+          image: gcr.io/k8s-staging-sig-storage/nfs-subdir-external-provisioner:arm64-linux-canary
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: nfs-root
+              mountPath: /nfs
+          securityContext:
+            capabilities:
+              add: ["SYS_ADMIN", "SETPCAP"]
+          env:
+            - name: PROVISIONER_NAME
+              value: nfs-provisioner
+            - name: NFS_SERVER
+              value: 10.43.20.49
+            - name: NFS_PATH
+              value: /nfs
+      volumes:
+        - name: nfs-root
+          nfs:
+            server: 10.43.20.49
+            path: /
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-storageclass # IMPORTANT pvc needs to mention this name
+  namespace: storage
+  labels:
+    app: nfs-provisioner
+provisioner: nfs-provisioner # name can be anything
+parameters:
+  pathPattern: "${.PVC.namespace}/${.PVC.annotations.nfs.io/storage-path}" # waits for nfs.io/storage-path annotation, if not specified will accept as empty string.
+  onDelete: delete

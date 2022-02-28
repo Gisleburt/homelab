@@ -1,0 +1,45 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-claim
+  namespace: storage
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "nfs-storageclass"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-tester
+  labels:
+    app: nfs-tester
+  namespace: storage
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nfs-tester
+  template:
+    metadata:
+      labels:
+        app: nfs-tester
+    spec:
+      containers:
+        - name: nfs-tester
+          image: alpine
+          volumeMounts:
+            - mountPath: /test-area
+              name: test-claim
+      volumes:
+        - name: test-claim
+          persistentVolumeClaim:
+            claimName: test-claim
