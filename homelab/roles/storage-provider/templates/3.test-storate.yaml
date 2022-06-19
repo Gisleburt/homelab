@@ -1,3 +1,4 @@
+# This file is not automatically installed, it exists to help test the nfs service
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -5,8 +6,9 @@ metadata:
   name: test-claim
   namespace: storage
   annotations:
-    volume.beta.kubernetes.io/storage-class: "nfs-storageclass"
+    nfs.io/storage-path: "nfs-tester"
 spec:
+  storageClassName: nfs-storageclass
   accessModes:
     - ReadWriteOnce
   resources:
@@ -36,6 +38,7 @@ spec:
       containers:
         - name: nfs-tester
           image: alpine
+          command: ["sh", "-c", "while true; do ls /test-area; sleep 10; done"]
           volumeMounts:
             - mountPath: /test-area
               name: test-claim

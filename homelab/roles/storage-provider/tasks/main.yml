@@ -21,18 +21,10 @@
     definition: "{{ item }}"
   loop: "{{ lookup('template', '1.storage-namespace.yaml') | from_yaml_all }}"
 
-- name: Create the NFS Service
+- name: Create the NFS Storage Provider
   delegate_to: localhost
   k8s:
     kubeconfig: ../k3s-config.yaml
     state: present
     definition: "{{ item }}"
-  loop: "{{ lookup('template', '2.storage-service.yaml') | from_yaml_all }}"
-
-- name: Set the storage provisioner
-  delegate_to: localhost
-  k8s:
-    kubeconfig: ../k3s-config.yaml
-    state: present
-    definition: "{{ item }}"
-  loop: "{{ lookup('template', '3.provisioner-storage-class.yaml') | from_yaml_all }}"
+  loop: "{{ lookup('template', '2.provisioner-storage-class.yaml') | from_yaml_all }}"

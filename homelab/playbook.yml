@@ -44,8 +44,7 @@
 
 ###
 - name: storage-provider
-  hosts: storage_provider
+  hosts: masters
 
   roles:
-    - storage-usb
     - storage-provider

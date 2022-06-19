@@ -1,6 +1,6 @@
 storage-usb
 ===========
 
-Adds an external usb storage
+Adds NFS storage
 
-See [Dynamic NFS Provisioning](https://medium.com/@myte/kubernetes-nfs-and-dynamic-nfs-provisioning-97e2afb8b4a9)
+Note, this requires an NFS service at a specific IP address

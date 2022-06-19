@@ -15,6 +15,9 @@ metadata:
   labels:
     app: nfs-provisioner
 rules:
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch"]
   - apiGroups: [""] # rules on persistentvolumes
     resources: ["persistentvolumes"]
     verbs: ["get", "list", "watch", "create", "delete"]
@@ -96,11 +99,8 @@ spec:
       serviceAccountName: nfs-provisioner-sa
       containers:
         - name: nfs-provisioner
-          image: gcr.io/k8s-staging-sig-storage/nfs-subdir-external-provisioner:arm64-linux-canary
+          image: gcr.io/k8s-staging-sig-storage/nfs-subdir-external-provisioner:v4.0.2
           imagePullPolicy: Always
-          volumeMounts:
-            - name: nfs-root
-              mountPath: /nfs
           securityContext:
             capabilities:
               add: ["SYS_ADMIN", "SETPCAP"]
@@ -108,14 +108,9 @@ spec:
             - name: PROVISIONER_NAME
               value: nfs-provisioner
             - name: NFS_SERVER
-              value: 10.43.20.49
+              value: 10.0.147.154
             - name: NFS_PATH
-              value: /nfs
-      volumes:
-        - name: nfs-root
-          nfs:
-            server: 10.43.20.49
-            path: /
+              value: /homelab
 
 ---
 apiVersion: storage.k8s.io/v1
@@ -125,7 +120,7 @@ metadata:
   namespace: storage
   labels:
     app: nfs-provisioner
-provisioner: nfs-provisioner # name can be anything
+provisioner: nfs-provisioner # name must match PROVISIONER_NAME env variable on pod
 parameters:
   pathPattern: "${.PVC.namespace}/${.PVC.annotations.nfs.io/storage-path}" # waits for nfs.io/storage-path annotation, if not specified will accept as empty string.
   onDelete: delete

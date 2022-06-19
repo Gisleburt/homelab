@@ -1,0 +1,25 @@
+---
+# tasks file for nfs-common
+- name: Install nfs-common
+  become: true
+  ansible.builtin.package:
+    name: nfs-common
+    state: present
+
+- name: Set NFS v4 as the default
+  become: true
+  ini_file:
+    create: true
+    path: /etc/nfsmount.conf
+    section: NFSMount_Global_Options
+    option: Defaultvers
+    value: "4"
+
+- name: Require NFS v4
+  become: true
+  ini_file:
+    create: true
+    path: /etc/nfsmount.conf
+    section: NFSMount_Global_Options
+    option: Nfsvers
+    value: "4"
