@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: status-lights
+  labels:
+    app: status-lights
+spec:
+  selector:
+    matchLabels:
+      app: status-lights
+  template:
+    metadata:
+      labels:
+        app: status-lights
+    spec:
+      containers:
+        - name: status-lights
+          image: registry.gitlab.com/gisleburt-homelab/usb_status_lights/alpine
+          imagePullPolicy: Always
+          command:
+            - "sh"
+            - "-c"
+            - "
+                while true; do
+                  /status_lights background 0 1 0 0;
+                  /status_lights background 1 1 0 0;
+                  /status_lights background 2 1 0 0;
+                  /status_lights background 3 1 0 0;
+                  sleep 300;
+                done
+              "
+          volumeMounts:
+            - mountPath: /dev/ttyACM0
+              name: usb-device
+          securityContext:
+            privileged: true
+      volumes:
+        - name: usb-device
+          hostPath:
+            # directory location on host
+            path: /dev/ttyACM0
+            type: CharDevice
