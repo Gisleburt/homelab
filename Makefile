@@ -1,10 +1,11 @@
-.PHONY: ansible.test run/* stop/* restart/*
+.PHONY: ansible.test start/* stop/* restart/*
 
 ANSIBLE = gisleburt/ansible
+KUBECTL = gisleburt/kubectl
 
 build/ansible: tools/ansible/*
 	@echo Building Docker image
-	@docker build tools/ansible --tag $(ANSIBLE)
+	@docker build tools/ansible --tag $(ANSIBLE) --no-cache
 	@mkdir -p build
 	@touch build/ansible
 
@@ -28,6 +29,8 @@ build/cluster: build/ansible homelab/* homelab/*/* homelab/*/*/* homelab/*/*/*/*
 
 build/kubectl: tools/kubectl/*
 	@echo Building kubectl docker image
+	@docker build tools/kubectl --tag $(KUBECTL) --no-cache
+	@mkdir -p build
 	@touch build/kubectl
 
 build/dashboard: services/kubernetes-web-ui/*.yml
@@ -40,21 +43,21 @@ build/dashboard: services/kubernetes-web-ui/*.yml
 
 build/everything: build/ansible test/ansible build/cluster build/kubectl build/dashboard
 
-run/dashboard: build/dashboard
+start/dashboard: build/dashboard
 
-run/gitlab-runner: build/kubectl
+start/gitlab-runner: build/kubectl
 	@echo Starting github runner
 	@docker run --rm -it \
       -v "${PWD}/k3s-config.yaml":/root/.kube/config \
       -v "${PWD}":/home \
-      gisleburt/kubectl \
+      $(KUBECTL) \
         kubectl apply -f services/gitlab-runner/stuff-gitlab-doesnt-configure.yaml
 
 	@docker run --rm -it \
 	  -v "${PWD}/k3s-config.yaml":/root/.kube/config \
 	  -v "${PWD}/tools/helm-cache":/root/.cache/helm \
 	  -v "${PWD}":/home \
-	  gisleburt/kubectl \
+	  $(KUBECTL) \
 	    sh -c \
 	    "helm repo add gitlab https://charts.gitlab.io && \
 	    helm repo update && \
@@ -69,7 +72,7 @@ restart/gitlab-runner:
 	  -v "${PWD}/k3s-config.yaml":/root/.kube/config \
 	  -v "${PWD}/tools/helm-cache":/root/.cache/helm \
 	  -v "${PWD}":/home \
-	  gisleburt/kubectl \
+	  $(KUBECTL) \
 	    sh -c \
 	    "helm repo add gitlab https://charts.gitlab.io && \
 		helm repo update && \
@@ -83,10 +86,10 @@ stop/gitlab-runner:
 	@docker run --rm -it \
 	  -v "${PWD}/k3s-config.yaml":/root/.kube/config \
 	  -v "${PWD}":/home \
-	  gisleburt/kubectl \
+	  $(KUBECTL) \
 		helm delete --namespace gitlab gitlab-runner
 	@docker run --rm -it \
       -v "${PWD}/k3s-config.yaml":/root/.kube/config \
       -v "${PWD}":/home \
-      gisleburt/kubectl \
+      $(KUBECTL) \
         kubectl delete -f services/gitlab-runner/stuff-gitlab-doesnt-configure.yaml
