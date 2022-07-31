@@ -40,15 +40,15 @@ fi
 #├─┼┤  ╠═╬╣  ╟─╫╢  ╞═╪╡
 #└─┴┘  ╚═╩╝  ╙─╨╜  ╘═╧╛
 
-echo "╔═════════════════╗"
-echo "║ Copying Keyfile ║"
-echo "╚═════════════════╝"
-ssh-copy-id -i $SSH_PUB $SSH_USER@$IP
-
-echo "╔═════════════════╗"
-echo "║ Change Password ║"
-echo "╚═════════════════╝"
-ssh -i $SSH_KEY -t $SSH_USER@$IP "passwd"
+#echo "╔═════════════════╗"
+#echo "║ Copying Keyfile ║"
+#echo "╚═════════════════╝"
+#ssh-copy-id -i $SSH_PUB $SSH_USER@$IP
+#
+#echo "╔═════════════════╗"
+#echo "║ Change Password ║"
+#echo "╚═════════════════╝"
+#ssh -i $SSH_KEY -t $SSH_USER@$IP "passwd"
 
 echo "╔══════════════════╗"
 echo "║ Setting Hostname ║"

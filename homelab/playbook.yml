@@ -14,7 +14,6 @@
         upgrade: safe
 
   roles:
-    - 64bit
     - swapless
     - poe
     - cgroups

@@ -25,11 +25,11 @@ to comment out the `poe` role in the ansible setup.
 ### To prepare your Raspberry Pis
 
 1. Download the [Raspberry Pi Imager](https://www.raspberrypi.org/software/)
-2. Flash your Micro SD cards with Raspberry Pi OS Lite 32 bit  
-   Note: hopefully one day a 64 bit version will exist, and we can remove some steps from ansible
-3. After flashing each Micro SD card, reinsert it into your computer and add an empty `ssh` file to
-   the root of the filesystem
-
+2. Flash your Micro SD cards with Raspberry Pi OS Lite 64 bit making sure to
+   1. enable SSH
+   2. copy in your ssh keyfile
+   3. set the username and password
+   
 ### Once you have connected your Pis to the switch
 
 1. Make sure that your Pis have been assigned static IP addresses by your router
