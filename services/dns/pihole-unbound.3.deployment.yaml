@@ -1,0 +1,111 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    k8s-app: pihole
+  name: pihole
+  namespace: dns
+spec:
+  replicas: 1 # temp
+#  replicas: 2 # because its using php, we'd need to put $_SESSION into a shared store like REDIS
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: pihole
+  template:
+    metadata:
+      labels:
+        k8s-app: pihole
+    spec:
+      containers:
+        - name: pihole
+          image: pihole/pihole:latest
+          ports:
+            - name: interface
+              containerPort: 80
+              protocol: TCP
+            - name: dns-tcp
+              containerPort: 53
+              protocol: TCP
+            - name: dns-udp
+              containerPort: 53
+              protocol: UDP
+          env:
+            - name: TZ
+              value: Europe/London
+            - name: WEBPASSWORD
+              value: temppassword-do-not-commit
+            - name: PIHOLE_DNS_
+              value: 1.1.1.1;208.67.222.222;8.8.8.8;8.8.4.4
+            - name: PIHOLE_DOMAIN
+              value: pihole.dni.sh
+          volumeMounts:
+            - mountPath: /etc/pihole
+              name: pihole
+            - mountPath: /etc/dnsmasq.d
+              name: pihole-dnsmasq
+#        - name: unbound
+#          image: mvance/unbound:latest
+#          ports:
+#            - name: dns-tcp
+#              containerPort: 53
+#              protocol: TCP
+#            - name: dns-udp
+#              containerPort: 53
+#              protocol: UDP
+      volumes:
+        - name: pihole
+          persistentVolumeClaim:
+            claimName: pihole
+        - name: pihole-dnsmasq
+          persistentVolumeClaim:
+            claimName: pihole-dnsmasq
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: pihole-interface
+  namespace: dns
+spec:
+  selector:
+    k8s-app: pihole
+  ports:
+    - name: interface
+      port: 80
+      protocol: TCP
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: pihole-dns
+  namespace: dns
+spec:
+  selector:
+    k8s-app: pihole
+  ports:
+    - name: dns
+      port: 53
+
+---
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: pihole-interface
+  namespace: dns
+spec:
+  rules:
+    - host: pihole.dni.sh
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: pihole
+                port:
+                  number: 80
+
+
