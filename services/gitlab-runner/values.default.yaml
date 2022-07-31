@@ -430,7 +430,7 @@ runners:
 ## Configure securitycontext
 ## ref: http://kubernetes.io/docs/user-guide/security-context/
 ##
-securityContext:
+podSecurityContext:
   runAsUser: 100
   # runAsGroup: 65533
   fsGroup: 65533
