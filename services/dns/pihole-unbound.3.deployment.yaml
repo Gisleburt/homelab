@@ -1,4 +1,15 @@
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pihole-dnsmasq-config
+  namespace: dns
+data:
+  # Very annoyingly you can't round-robin wildcards
+  50-custom-dns.conf: |-
+    address=/dni.sh/10.4.0.100
+
+---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -18,6 +29,15 @@ spec:
       labels:
         k8s-app: pihole
     spec:
+      initContainers:
+        - name: copy-pihole-dnsmasq-config
+          image: alpine:latest
+          command: [ "sh", "-c", "cp -R --dereference /source/* /destination" ]
+          volumeMounts:
+            - mountPath: /source
+              name: pihole-dnsmasq-config
+            - mountPath: /destination
+              name: pihole-dnsmasq
       containers:
         - name: pihole
           image: pihole/pihole:latest
@@ -37,7 +57,7 @@ spec:
             - name: WEBPASSWORD
               value: temppassword-do-not-commit
             - name: PIHOLE_DNS_
-              value: 1.1.1.1;208.67.222.222;8.8.8.8;8.8.4.4
+              value: 1.1.1.1;1.0.0.1;208.67.222.222;8.8.8.8;8.8.4.4
             - name: PIHOLE_DOMAIN
               value: pihole.dni.sh
           volumeMounts:
@@ -61,6 +81,9 @@ spec:
         - name: pihole-dnsmasq
           persistentVolumeClaim:
             claimName: pihole-dnsmasq
+        - name: pihole-dnsmasq-config
+          configMap:
+            name: pihole-dnsmasq-config
 
 ---
 kind: Service
