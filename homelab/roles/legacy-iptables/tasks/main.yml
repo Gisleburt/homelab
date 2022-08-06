@@ -1,5 +1,11 @@
 ---
 # tasks file for legacy-iptables
+- name: Install iptables
+  become: true
+  ansible.builtin.package:
+    name: iptables
+    state: present
+
 - name: Detect which iptables
   become: yes
   command: iptables --version

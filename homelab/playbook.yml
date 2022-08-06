@@ -18,7 +18,6 @@
     - poe
     - cgroups
     - legacy-iptables
-    - k3s-download
     - nfs-common
 
   handlers:

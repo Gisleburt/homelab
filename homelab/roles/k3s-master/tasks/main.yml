@@ -1,5 +1,16 @@
 ---
 # tasks file for k3s-master
+- name: Download
+  get_url:
+    dest: ~/k3s
+    url: https://get.k3s.io
+    force: true
+
+- name: Set execute permission
+  file:
+    path: ~/k3s
+    mode: u+x
+
 - name: start master
   shell: ~/k3s server
   async: 10
