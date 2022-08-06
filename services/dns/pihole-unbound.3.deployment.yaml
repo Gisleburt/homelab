@@ -104,8 +104,10 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: pihole-dns
+  name: pihole-dns-udp
   namespace: dns
+  annotations:
+    metallb.universe.tf/allow-shared-ip: shared
 spec:
   type: LoadBalancer
   loadBalancerIP: 10.4.16.1 # This needs to be set, everything else we can do dynamically
@@ -114,6 +116,25 @@ spec:
   ports:
     - name: dns
       port: 53
+      protocol: UDP
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: pihole-dns-tcp
+  namespace: dns
+  annotations:
+    metallb.universe.tf/allow-shared-ip: shared
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 10.4.16.1 # This needs to be set, everything else we can do dynamically
+  selector:
+    k8s-app: pihole
+  ports:
+    - name: dns
+      port: 53
+      protocol: TCP
 
 ---
 kind: Ingress
@@ -130,7 +151,7 @@ spec:
             path: /
             backend:
               service:
-                name: pihole
+                name: pihole-interface
                 port:
                   number: 80
 
