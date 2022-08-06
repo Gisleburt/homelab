@@ -1,18 +1,4 @@
 ---
-# add storage provider label
-- name: Label the node as a storage provider
-  delegate_to: localhost
-  k8s:
-    kubeconfig: ../k3s-config.yaml
-    name: "{{ hostvars[inventory_hostname]['ansible_hostname'] }}"
-    definition:
-      apiVersion: v1
-      kind: Node
-      name: "{{ hostvars[inventory_hostname]['ansible_hostname'] }}"
-      metadata:
-        labels:
-          storage-provider: "930Gi"
-
 - name: Create Storage Namespace
   delegate_to: localhost
   k8s:
