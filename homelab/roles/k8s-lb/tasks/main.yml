@@ -1,0 +1,17 @@
+---
+# Install MetalLB
+- name: Install MetalLB
+  delegate_to: localhost
+  k8s:
+    kubeconfig: ../k3s-config.yaml
+    state: present
+    definition: "{{ item }}"
+  loop: "{{ lookup('template', '1.metallb-native.yaml') | from_yaml_all }}"
+
+- name: Configure MetalLB
+  delegate_to: localhost
+  k8s:
+    kubeconfig: ../k3s-config.yaml
+    state: present
+    definition: "{{ item }}"
+  loop: "{{ lookup('template', '2.configuration.yaml') | from_yaml_all }}"

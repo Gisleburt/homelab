@@ -32,6 +32,7 @@
 
   roles:
     - k3s-master
+    - k8s-lb
 
 ###
 - name: k8s-node

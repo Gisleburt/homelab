@@ -4,11 +4,17 @@
   get_url:
     dest: ~/k3s
     url: https://get.k3s.io
+  tags:
+    - always
 
 - name: Set execute permission
   file:
     path: ~/k3s
     mode: u+x
+  tags:
+    - always
 
 - name: start nodes
   shell: ~/k3s agent --server https://10.4.0.100:6443 --token {{ hostvars['10.4.0.100']['node_token'] }} &
+  tags:
+    - always

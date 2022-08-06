@@ -69,6 +69,7 @@ metadata:
   name: pihole-interface
   namespace: dns
 spec:
+  type: LoadBalancer
   selector:
     k8s-app: pihole
   ports:
@@ -83,6 +84,8 @@ metadata:
   name: pihole-dns
   namespace: dns
 spec:
+  type: LoadBalancer
+  loadBalancerIP: 10.4.16.1 # This needs to be set, everything else we can do dynamically
   selector:
     k8s-app: pihole
   ports:

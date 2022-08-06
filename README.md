@@ -62,6 +62,12 @@ to comment out the `poe` role in the ansible setup.
    ansible_python_interpreter=/usr/bin/python3
    ```
 
+> **A Note on IP Addresses:** This playbook assumes your homelab will sit on a 10.4.0.0/16 network.
+> Specifically, the master will be on 10.4.0.100, nodes will build up after that, eg, 10.4.0.101,
+> 102, etc.
+> 
+> Load balancers will be configured through MetalLB to work on addresses 10.4.16.0/24
+
 ## Commands
 
 Make commands will use empty files in `build/` to keep track of changes 
@@ -69,9 +75,22 @@ Make commands will use empty files in `build/` to keep track of changes
 ### `make build/cluster`
 
 The only cammand you'll really need, once the [Preparation](#Preparation) steps are complete. It
-will set up the PoE hat, remove the swap file, and (todo) install the appropriate services.
+will set up the PoE hat, remove the swap file, and install the appropriate services. Finally it
+will copy a `k3s-config.yaml` file to the root of this project (`.gitignore`d) so that you can
+connect to the cluster with kubectl (see below).
+
+> **A note on replacing nodes**: Rerunning `make build/cluster` will automatically rebuild nodes
+> however, you must remember to delete nodes that have died from the cluster first with `kubectl
+> delete node`. Kubernetes is smart enough to be suspicious of nodes connecting with the same name
+> as existing nodes and prevent them from joining the cluster.
 
 ### `make build/ansible`
 
 Creates the ansible docker image that will be used to run ansible playbooks. This is run
 automatically but `build/cluster` so there is no need to run it separately.
+
+### `make build/kubectl
+
+Creates a kubectl that exists inside of docker, so that you don't need to install it locally / mess
+with your locally installed kubectl. When you use the aliased version of kubectl, it will share
+the k3s-config.yaml file in the root of this project directory to connect to the k3s cluser. 

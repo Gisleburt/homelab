@@ -5,16 +5,22 @@
     dest: ~/k3s
     url: https://get.k3s.io
     force: true
+  tags:
+    - always
 
 - name: Set execute permission
   file:
     path: ~/k3s
     mode: u+x
+  tags:
+    - always
 
 - name: start master
-  shell: ~/k3s server
+  shell: ~/k3s server --disable servicelb
   async: 10
   poll: 0
+  tags:
+    - always
 
 - name: Wait for server start
   become: yes
@@ -34,6 +40,8 @@
 - name: Save contents
   set_fact:
     node_token: "{{ node_token['content'] }}"
+  tags:
+    - always
 
 - name: Modify config
   become: yes
