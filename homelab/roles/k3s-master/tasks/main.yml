@@ -20,12 +20,16 @@
   become: yes
   wait_for:
     path: /var/lib/rancher/k3s/server/node-token
+  tags:
+    - always
 
 - name: Get token
   become: yes
   slurp:
     src: /var/lib/rancher/k3s/server/node-token
   register: node_token
+  tags:
+    - always
 
 - name: Save contents
   set_fact:
