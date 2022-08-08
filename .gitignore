@@ -2,3 +2,5 @@
 build
 hosts
 k3s-config.yaml
+*secret*
+!*secret*.gpg

@@ -1,0 +1,33 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: homeassistant
+  namespace: smarthome
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8123
+      targetPort: 8123
+  externalIPs:
+    - 10.3.0.100
+
+---
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: homeassistant
+  namespace: smarthome
+spec:
+  rules:
+    - host: ha.dni.sh
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: homeassistant
+                port:
+                  number: 8123

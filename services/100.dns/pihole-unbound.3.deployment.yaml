@@ -154,5 +154,3 @@ spec:
                 name: pihole-interface
                 port:
                   number: 80
-
-
