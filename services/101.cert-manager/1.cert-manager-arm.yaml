@@ -5241,6 +5241,8 @@ spec:
           - --v=2
           - --cluster-resource-namespace=$(POD_NAMESPACE)
           - --leader-election-namespace=kube-system
+          - --dns01-recursive-nameservers-only
+          - --dns01-recursive-nameservers=1.1.1.1:53,1.0.0.1:53,8.8.8.8:53
           ports:
           - containerPort: 9402
             name: http-metrics

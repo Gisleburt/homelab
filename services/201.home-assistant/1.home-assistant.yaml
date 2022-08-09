@@ -1,24 +1,40 @@
 ---
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: home-assistant
+  namespace: routing
+subsets:
+  - addresses:
+      - ip: 10.3.0.100
+    ports:
+      - name: http
+        port: 8123
+        protocol: TCP
+
+---
 kind: Service
 apiVersion: v1
 metadata:
-  name: homeassistant
-  namespace: smarthome
+  name: home-assistant
+  namespace: routing
 spec:
+  clusterIP: None
   ports:
     - name: http
-      protocol: TCP
-      port: 8123
+      port: 80
       targetPort: 8123
-  externalIPs:
-    - 10.3.0.100
+      protocol: TCP
 
 ---
 kind: Ingress
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: homeassistant
-  namespace: smarthome
+  name: home-assistant
+  namespace: routing
+  annotations:
+    # add an annotation indicating the issuer to use.
+    cert-manager.io/cluster-issuer: cloudflare-issuer-dni-sh
 spec:
   rules:
     - host: ha.dni.sh
@@ -28,6 +44,10 @@ spec:
             path: /
             backend:
               service:
-                name: homeassistant
+                name: home-assistant
                 port:
-                  number: 8123
+                  name: 80
+  tls:
+    - hosts:
+        - ha.dni.sh
+      secretName: home-assistant-dni-sh-certificate
