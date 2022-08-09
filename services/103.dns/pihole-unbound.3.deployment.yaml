@@ -142,6 +142,9 @@ apiVersion: networking.k8s.io/v1
 metadata:
   name: pihole-interface
   namespace: dns
+  annotations:
+    # add an annotation indicating the issuer to use.
+    cert-manager.io/cluster-issuer: cloudflare-issuer-dni-sh
 spec:
   rules:
     - host: pihole.dni.sh
@@ -154,3 +157,7 @@ spec:
                 name: pihole-interface
                 port:
                   number: 80
+  tls:
+    - hosts:
+        - pihole.dni.sh
+      secretName: pihole-dni-sh-certificate
