@@ -32,7 +32,6 @@
 
   roles:
     - k3s-master
-    - k8s-lb
 
 ###
 - name: k8s-node
@@ -40,10 +39,3 @@
 
   roles:
     - k3s-node
-
-###
-- name: storage-provider
-  hosts: masters
-
-  roles:
-    - storage-provider
