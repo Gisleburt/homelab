@@ -55,7 +55,11 @@ spec:
             - name: TZ
               value: Europe/London
             - name: WEBPASSWORD
-              value: temppassword-do-not-commit
+              valueFrom:
+                secretKeyRef:
+                  name: pihole-password
+                  key: password
+                  optional: false
             - name: PIHOLE_DNS_
               value: 1.1.1.1;1.0.0.1;208.67.222.222;8.8.8.8;8.8.4.4
             - name: PIHOLE_DOMAIN
