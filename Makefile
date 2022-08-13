@@ -51,7 +51,7 @@ start/gitlab-runner: build/kubectl
       -v "${PWD}/k3s-config.yaml":/root/.kube/config \
       -v "${PWD}":/home \
       $(KUBECTL) \
-        kubectl apply -f services/gitlab-runner/stuff-gitlab-doesnt-configure.yaml
+        kubectl apply -f services-helm/gitlab-runner/stuff-gitlab-doesnt-configure.yaml
 
 	@docker run --rm -it \
 	  -v "${PWD}/k3s-config.yaml":/root/.kube/config \
@@ -64,7 +64,7 @@ start/gitlab-runner: build/kubectl
 	    helm install \
 	      --namespace gitlab \
 	      gitlab-runner \
-	      -f services/gitlab-runner/values.yaml \
+	      -f services-helm/gitlab-runner/values.yaml \
 	      gitlab/gitlab-runner"
 
 restart/gitlab-runner:
@@ -79,7 +79,7 @@ restart/gitlab-runner:
 	    helm upgrade \
 	      --namespace gitlab \
 	      gitlab-runner \
-	      -f services/gitlab-runner/values.yaml \
+	      -f services-helm/gitlab-runner/values.yaml \
 	      gitlab/gitlab-runner"
 
 stop/gitlab-runner:
@@ -92,4 +92,4 @@ stop/gitlab-runner:
       -v "${PWD}/k3s-config.yaml":/root/.kube/config \
       -v "${PWD}":/home \
       $(KUBECTL) \
-        kubectl delete -f services/gitlab-runner/stuff-gitlab-doesnt-configure.yaml
+        kubectl delete -f services-helm/gitlab-runner/stuff-gitlab-doesnt-configure.yaml
