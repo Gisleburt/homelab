@@ -1,0 +1,162 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    k8s-app: plex-media-server
+  name: plex-media-server
+  namespace: plex
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: plex-media-server
+  template:
+    metadata:
+      labels:
+        k8s-app: plex-media-server
+    spec:
+      containers:
+        - name: plex-media-server
+          image: registry.gitlab.com/gisleburt-homelab/plex-media-server:latest
+          imagePullPolicy: Always
+          ports:
+            - name: pms
+              containerPort: 32400
+              protocol: TCP
+            - name: plex-companion
+              containerPort: 3005
+              protocol: TCP
+            - name: plex-roku
+              containerPort: 8324
+              protocol: TCP
+            - name: plex-dlna-tcp
+              containerPort: 32469
+              protocol: TCP
+            - name: plex-dlna-udp
+              containerPort: 1900
+              protocol: UDP
+            - name: discovery-0
+              containerPort: 32410
+              protocol: UDP
+            - name: discovery-2
+              containerPort: 32412
+              protocol: UDP
+            - name: discovery-3
+              containerPort: 32413
+              protocol: UDP
+            - name: discovery-4
+              containerPort: 32414
+              protocol: UDP
+          env:
+            - name: TZ
+              value: Europe/London
+            - name: PLEX_CLAIM
+              valueFrom:
+                secretKeyRef:
+                  name: plex-claim
+                  key: claim
+                  optional: false
+            - name: ADVERTISE_IP
+              value: "http://10.4.16.2:32400/"
+          volumeMounts:
+            - mountPath: /config
+              name: plex-config
+            - mountPath: /transcode
+              name: plex-transcode
+            - mountPath: /data
+              name: plex-data
+      volumes:
+        - name: plex-config
+          persistentVolumeClaim:
+            claimName: plex-config
+        - name: plex-transcode
+          persistentVolumeClaim:
+            claimName: plex-transcode
+        - name: plex-data
+          persistentVolumeClaim:
+            claimName: plex-data
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: plex-media-server-tcp
+  namespace: plex
+  annotations:
+    metallb.universe.tf/allow-shared-ip: plex-media-server
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 10.4.16.2
+  selector:
+    k8s-app: plex-media-server
+  ports:
+    - name: pms
+      port: 32400
+      protocol: TCP
+    - name: plex-companion
+      port: 3005
+      protocol: TCP
+    - name: plex-roku
+      port: 8324
+      protocol: TCP
+    - name: plex-dlna-tcp
+      port: 32469
+      protocol: TCP
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: plex-media-server-udp
+  namespace: plex
+  annotations:
+    metallb.universe.tf/allow-shared-ip: plex-media-server
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 10.4.16.2
+  selector:
+    k8s-app: plex-media-server
+  ports:
+    - name: plex-dlna-udp
+      port: 1900
+      protocol: UDP
+    - name: discovery-0
+      port: 32410
+      protocol: UDP
+    - name: discovery-2
+      port: 32412
+      protocol: UDP
+    - name: discovery-3
+      port: 32413
+      protocol: UDP
+    - name: discovery-4
+      port: 32414
+      protocol: UDP
+
+---
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: plex-media-server
+  namespace: plex
+  annotations:
+    # add an annotation indicating the issuer to use.
+    cert-manager.io/cluster-issuer: cloudflare-issuer-dni-sh
+spec:
+  rules:
+    - host: plex.dni.sh
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: plex-media-server-tcp
+                port:
+                  number: 32400
+  tls:
+    - hosts:
+        - plex.dni.sh
+      secretName: plex-dni-sh-certificate
