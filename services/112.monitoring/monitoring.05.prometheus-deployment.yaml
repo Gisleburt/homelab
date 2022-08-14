@@ -42,9 +42,9 @@ spec:
           configMap:
             defaultMode: 420
             name: prometheus-server-conf
-
         - name: prometheus-storage-volume
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: prometheus-storage
 
 
 # Delete the following once grafana is working
@@ -63,18 +63,19 @@ spec:
   ports:
     - port: 9090
 
+
 ---
 kind: Ingress
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: prometheus-server
+  name: prometheus
   namespace: monitoring
   annotations:
     # add an annotation indicating the issuer to use.
     cert-manager.io/cluster-issuer: cloudflare-issuer-dni-sh
 spec:
   rules:
-    - host: monitoring.dni.sh
+    - host: prometheus.dni.sh
       http:
         paths:
           - pathType: Prefix
@@ -86,5 +87,5 @@ spec:
                   number: 9090
   tls:
     - hosts:
-        - monitoring.dni.sh
-      secretName: monitoring-dni-sh-certificate
+        - prometheus.dni.sh
+      secretName: prometheus-dni-sh-certificate
