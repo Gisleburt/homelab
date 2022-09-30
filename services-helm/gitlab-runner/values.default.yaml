@@ -328,12 +328,19 @@ runners:
   # runner configuration: https://docs.gitlab.com/runner/configuration/advanced-configuration.html
   config: |
     [[runners]]
+      cache_dir = "/tmp/gitlab/cache"
+    
       [runners.kubernetes]
         namespace = "{{.Release.Namespace}}"
         image = "alpine"
         helper_image = "gitlab/gitlab-runner-helper:arm64-latest"
         privileged = true
         dns_policy = "cluster-first-with-host-net"
+    
+      [[runners.kubernetes.volumes.pvc]]
+        name = "runner-cache"
+        mount_path = "/tmp/gitlab/cache"
+    
       [[runners.kubernetes.volumes.empty_dir]]
         name = "docker-certs"
         mount_path = "/certs"

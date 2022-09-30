@@ -3,3 +3,19 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: gitlab
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: runner-cache
+  namespace: gitlab
+  annotations:
+    nfs.io/storage-path: "runner-cache"
+spec:
+  storageClassName: nfs-storageclass
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
