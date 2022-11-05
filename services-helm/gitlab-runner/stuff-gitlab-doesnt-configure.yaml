@@ -10,8 +10,6 @@ kind: PersistentVolumeClaim
 metadata:
   name: runner-cache
   namespace: gitlab
-  annotations:
-    nfs.io/storage-path: "runner-cache"
 spec:
   storageClassName: nfs-storageclass
   accessModes:
