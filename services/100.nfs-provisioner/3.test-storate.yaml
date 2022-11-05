@@ -5,8 +5,6 @@ kind: PersistentVolumeClaim
 metadata:
   name: test-claim
   namespace: storage
-  annotations:
-    nfs.io/storage-path: "nfs-tester"
 spec:
   storageClassName: nfs-storageclass
   accessModes:

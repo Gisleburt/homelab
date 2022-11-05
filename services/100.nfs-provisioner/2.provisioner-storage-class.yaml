@@ -122,5 +122,5 @@ metadata:
     app: nfs-provisioner
 provisioner: nfs-provisioner # name must match PROVISIONER_NAME env variable on pod
 parameters:
-  pathPattern: "${.PVC.namespace}/${.PVC.annotations.nfs.io/storage-path}" # waits for nfs.io/storage-path annotation, if not specified will accept as empty string.
+  pathPattern: "${.PVC.namespace}/${.PVC.name}"
   onDelete: delete
