@@ -62,21 +62,21 @@ spec:
               value: "http://10.4.16.2:32400/"
           volumeMounts:
             - mountPath: /config
-              name: plex-config
+              name: config
             - mountPath: /transcode
-              name: plex-transcode
+              name: transcode
             - mountPath: /data
-              name: plex-data
+              name: data
       volumes:
-        - name: plex-config
+        - name: config
           persistentVolumeClaim:
-            claimName: plex-config
-        - name: plex-transcode
+            claimName: config
+        - name: transcode
           persistentVolumeClaim:
-            claimName: plex-transcode
-        - name: plex-data
+            claimName: transcode
+        - name: data
           persistentVolumeClaim:
-            claimName: plex-data
+            claimName: data
 
 ---
 kind: Service
