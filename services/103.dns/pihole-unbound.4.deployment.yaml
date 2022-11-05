@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: pihole-dnsmasq-config
+  name: dnsmasq-config
   namespace: dns
 data:
   # Very annoyingly you can't round-robin wildcards
@@ -35,9 +35,9 @@ spec:
           command: [ "sh", "-c", "cp -R --dereference /source/* /destination" ]
           volumeMounts:
             - mountPath: /source
-              name: pihole-dnsmasq-config
+              name: dnsmasq-config
             - mountPath: /destination
-              name: pihole-dnsmasq
+              name: dnsmasq
       containers:
         - name: pihole
           image: pihole/pihole:latest
@@ -68,7 +68,7 @@ spec:
             - mountPath: /etc/pihole
               name: pihole
             - mountPath: /etc/dnsmasq.d
-              name: pihole-dnsmasq
+              name: dnsmasq
 #        - name: unbound
 #          image: mvance/unbound:latest
 #          ports:
@@ -82,12 +82,12 @@ spec:
         - name: pihole
           persistentVolumeClaim:
             claimName: pihole
-        - name: pihole-dnsmasq
+        - name: dnsmasq
           persistentVolumeClaim:
-            claimName: pihole-dnsmasq
-        - name: pihole-dnsmasq-config
+            claimName: dnsmasq
+        - name: dnsmasq-config
           configMap:
-            name: pihole-dnsmasq-config
+            name: dnsmasq-config
 
 ---
 kind: Service
