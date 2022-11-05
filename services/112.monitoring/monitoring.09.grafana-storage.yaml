@@ -4,8 +4,6 @@ kind: PersistentVolumeClaim
 metadata:
   name: grafana-storage
   namespace: monitoring
-  annotations:
-    nfs.io/storage-path: "grafana-storage"
 spec:
   storageClassName: nfs-storageclass
   accessModes:

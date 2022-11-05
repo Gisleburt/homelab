@@ -4,8 +4,6 @@ kind: PersistentVolumeClaim
 metadata:
   name: prometheus-storage
   namespace: monitoring
-  annotations:
-    nfs.io/storage-path: "prometheus-storage"
 spec:
   storageClassName: nfs-storageclass
   accessModes:
