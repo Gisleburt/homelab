@@ -1,0 +1,76 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    k8s-app: factorio
+  name: factorio
+  namespace: factorio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: factorio
+  template:
+    metadata:
+      labels:
+        k8s-app: factorio
+    spec:
+      initContainers:
+        - name: config-copy
+          image: alpine
+          command: [ "/bin/sh", "-c", "cp -r /config /factorio" ]
+          volumeMounts:
+            - mountPath: /factorio
+              name: factorio
+            - mountPath: /config
+              name: config
+      containers:
+        - name: factorio
+          image: factoriotools/factorio:stable
+          imagePullPolicy: Always
+          env:
+            - name: GENERATE_NEW_SAVE
+              value: "true"
+            - name: LOAD_LATEST_SAVE
+              value: "true"
+            - name: SAVE_NAME
+              value: "masons"
+          ports:
+            - name: game
+              containerPort: 34197
+              protocol: UDP
+            - name: rcon
+              containerPort: 27015
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /factorio
+              name: factorio
+      volumes:
+        - name: factorio
+          persistentVolumeClaim:
+            claimName: factorio
+        - name: config
+          secret:
+            secretName: config
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: factorio
+  namespace: factorio
+  annotations:
+    metallb.universe.tf/allow-shared-ip: factorio
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 10.4.16.3
+  selector:
+    k8s-app: factorio
+  ports:
+    - name: game
+      port: 34197
+      protocol: UDP
+    - name: rcon
+      port: 27015
+      protocol: TCP
