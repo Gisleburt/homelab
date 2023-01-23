@@ -1,5 +1,5 @@
 ---
-- name: All Pis
+- name: Everything
   hosts: k8s
 
   pre_tasks:
@@ -14,11 +14,23 @@
         upgrade: safe
 
   roles:
+    - legacy-iptables
+    - nfs-common
+
+  handlers:
+    - name: restart pi
+      become: true
+      reboot:
+        reboot_timeout: 120
+
+###
+- name: All Pis
+  hosts: pis
+
+  roles:
     - swapless
     - poe
     - cgroups
-    - legacy-iptables
-    - nfs-common
 
   handlers:
     - name: restart pi
