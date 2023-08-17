@@ -5,9 +5,8 @@ metadata:
   name: dnsmasq-config
   namespace: dns
 data:
-  # Very annoyingly you can't round-robin wildcards
   50-custom-dns.conf: |-
-    address=/dni.sh/10.4.0.100
+    address=/dni.sh/10.4.16.5
 
 ---
 kind: Deployment
