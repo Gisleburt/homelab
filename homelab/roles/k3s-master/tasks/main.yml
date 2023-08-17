@@ -56,3 +56,5 @@
     src: /etc/rancher/k3s/k3s.yaml
     dest: ../k3s-config.yaml
     flat: yes
+  tags:
+    - get-config
