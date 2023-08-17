@@ -39,7 +39,7 @@ spec:
               name: dnsmasq
       containers:
         - name: pihole
-          image: pihole/pihole:latest
+          image: pihole/pihole:2023.05.2
           ports:
             - name: interface
               containerPort: 80
