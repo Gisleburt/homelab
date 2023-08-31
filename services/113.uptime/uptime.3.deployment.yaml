@@ -1,0 +1,81 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: uptime-kuma
+  name: uptime-kuma
+  namespace: uptime
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uptime-kuma
+  template:
+    metadata:
+      labels:
+        app: uptime-kuma
+    spec:
+      containers:
+        - name: uptime-kuma
+          image: louislam/uptime-kuma:1.11.4
+          env:
+            - name: UPTIME_KUMA_PORT
+              value: "3001"
+            - name: PORT
+              value: "3001"
+          ports:
+            - name: uptime-kuma
+              containerPort: 3001
+              protocol: TCP
+          volumeMounts:
+            - name: uptime-kuma
+              mountPath: /app/data
+      volumes:
+        - name: uptime-kuma
+          persistentVolumeClaim:
+            claimName: uptime-kuma
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: uptime-kuma
+  namespace: uptime
+  annotations:
+    metallb.universe.tf/allow-shared-ip: uptime-kuma
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 10.4.16.5
+  selector:
+    app: uptime-kuma
+  ports:
+    - name: uptime-kuma
+      port: 3001
+      protocol: TCP
+
+---
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: uptime-kuma
+  namespace: uptime
+  annotations:
+    # add an annotation indicating the issuer to use.
+    cert-manager.io/cluster-issuer: cloudflare-issuer-dni-sh
+spec:
+  rules:
+    - host: kuma.dni.sh
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: uptime-kuma
+                port:
+                  number: 3001
+  tls:
+    - hosts:
+        - kuma.dni.sh
+      secretName: kuma-dni-sh-certificate
