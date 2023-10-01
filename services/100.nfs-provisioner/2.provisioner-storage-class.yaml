@@ -5,7 +5,7 @@ metadata:
   name: nfs-provisioner-sa
   namespace: storage
   labels:
-    app: nfs-provisioner
+    app.kubernetes.io/name: nfs-provisioner
 ---
 kind: ClusterRole # Role of kubernetes
 apiVersion: rbac.authorization.k8s.io/v1 # auth API
@@ -13,7 +13,7 @@ metadata:
   name: nfs-provisioner-cr
   namespace: storage
   labels:
-    app: nfs-provisioner
+    app.kubernetes.io/name: nfs-provisioner
 rules:
   - apiGroups: [""]
     resources: ["nodes"]
@@ -37,7 +37,7 @@ metadata:
   name: nfs-provisioner-crb
   namespace: storage
   labels:
-    app: nfs-provisioner
+    app.kubernetes.io/name: nfs-provisioner
 subjects:
   - kind: ServiceAccount
     name: nfs-provisioner-sa # defined on top of file
@@ -53,7 +53,7 @@ metadata:
   name: nfs-provisioner-r
   namespace: storage
   labels:
-    app: nfs-provisioner
+    app.kubernetes.io/name: nfs-provisioner
 rules:
   - apiGroups: [""]
     resources: ["endpoints"]
@@ -65,7 +65,7 @@ metadata:
   name: nfs-provisioner-rb
   namespace: storage
   labels:
-    app: nfs-provisioner
+    app.kubernetes.io/name: nfs-provisioner
 subjects:
   - kind: ServiceAccount
     name: nfs-provisioner-sa # same as top of the file
@@ -82,7 +82,7 @@ kind: Deployment
 metadata:
   name: nfs-provisioner
   labels:
-    app: nfs-provisioner
+    app.kubernetes.io/name: nfs-provisioner
   namespace: storage
 spec:
   replicas: 1
@@ -90,11 +90,11 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: nfs-provisioner
+      app.kubernetes.io/name: nfs-provisioner
   template:
     metadata:
       labels:
-        app: nfs-provisioner
+        app.kubernetes.io/name: nfs-provisioner
     spec:
       serviceAccountName: nfs-provisioner-sa
       containers:
@@ -119,7 +119,7 @@ metadata:
   name: nfs-storageclass # IMPORTANT pvc needs to mention this name
   namespace: storage
   labels:
-    app: nfs-provisioner
+    app.kubernetes.io/name: nfs-provisioner
 provisioner: nfs-provisioner # name must match PROVISIONER_NAME env variable on pod
 parameters:
   pathPattern: "${.PVC.namespace}/${.PVC.name}"

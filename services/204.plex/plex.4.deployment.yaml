@@ -3,7 +3,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   labels:
-    k8s-app: plex-media-server
+    app.kubernetes.io/name: plex-media-server
   name: plex-media-server
   namespace: plex
 spec:
@@ -11,11 +11,11 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      k8s-app: plex-media-server
+      app.kubernetes.io/name: plex-media-server
   template:
     metadata:
       labels:
-        k8s-app: plex-media-server
+        app.kubernetes.io/name: plex-media-server
     spec:
       containers:
         - name: plex-media-server
@@ -90,7 +90,7 @@ spec:
   type: LoadBalancer
   loadBalancerIP: 10.4.16.2
   selector:
-    k8s-app: plex-media-server
+    app.kubernetes.io/name: plex-media-server
   ports:
     - name: pms
       port: 32400
@@ -117,7 +117,7 @@ spec:
   type: LoadBalancer
   loadBalancerIP: 10.4.16.2
   selector:
-    k8s-app: plex-media-server
+    app.kubernetes.io/name: plex-media-server
   ports:
     - name: plex-dlna-udp
       port: 1900

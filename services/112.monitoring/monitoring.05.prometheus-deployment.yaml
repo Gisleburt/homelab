@@ -5,16 +5,16 @@ metadata:
   name: prometheus-server
   namespace: monitoring
   labels:
-    app: prometheus-server
+    app.kubernetes.io/name: prometheus-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: prometheus-server
+      app.kubernetes.io/name: prometheus-server
   template:
     metadata:
       labels:
-        app: prometheus-server
+        app.kubernetes.io/name: prometheus-server
     spec:
       containers:
         - name: prometheus
@@ -59,7 +59,7 @@ metadata:
     prometheus.io/port:   '9090'
 spec:
   selector:
-    app: prometheus-server
+    app.kubernetes.io/name: prometheus-server
   ports:
     - port: 9090
 

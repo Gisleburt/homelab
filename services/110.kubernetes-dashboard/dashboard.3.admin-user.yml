@@ -5,4 +5,4 @@ metadata:
   name: admin-user
   namespace: kubernetes-dashboard
   labels:
-    k8s-app: kubernetes-dashboard
+    app.kubernetes.io/name: kubernetes-dashboard

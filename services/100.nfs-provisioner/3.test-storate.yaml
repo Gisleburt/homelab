@@ -19,7 +19,7 @@ kind: Deployment
 metadata:
   name: nfs-tester
   labels:
-    app: nfs-tester
+    app.kubernetes.io/name: nfs-tester
   namespace: storage
 spec:
   replicas: 1
@@ -27,11 +27,11 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: nfs-tester
+      app.kubernetes.io/name: nfs-tester
   template:
     metadata:
       labels:
-        app: nfs-tester
+        app.kubernetes.io/name: nfs-tester
     spec:
       containers:
         - name: nfs-tester

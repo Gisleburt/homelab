@@ -1288,7 +1288,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    app: metallb
+    app.kubernetes.io/name: metallb
   name: controller
   namespace: metallb-system
 ---
@@ -1296,7 +1296,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    app: metallb
+    app.kubernetes.io/name: metallb
   name: speaker
   namespace: metallb-system
 ---
@@ -1304,7 +1304,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    app: metallb
+    app.kubernetes.io/name: metallb
   name: controller
   namespace: metallb-system
 rules:
@@ -1396,7 +1396,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    app: metallb
+    app.kubernetes.io/name: metallb
   name: pod-lister
   namespace: metallb-system
 rules:
@@ -1483,7 +1483,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app: metallb
+    app.kubernetes.io/name: metallb
   name: metallb-system:controller
 rules:
   - apiGroups:
@@ -1577,7 +1577,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app: metallb
+    app.kubernetes.io/name: metallb
   name: metallb-system:speaker
 rules:
   - apiGroups:
@@ -1619,7 +1619,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    app: metallb
+    app.kubernetes.io/name: metallb
   name: controller
   namespace: metallb-system
 roleRef:
@@ -1635,7 +1635,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    app: metallb
+    app.kubernetes.io/name: metallb
   name: pod-lister
   namespace: metallb-system
 roleRef:
@@ -1651,7 +1651,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app: metallb
+    app.kubernetes.io/name: metallb
   name: metallb-system:controller
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -1666,7 +1666,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app: metallb
+    app.kubernetes.io/name: metallb
   name: metallb-system:speaker
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -1708,7 +1708,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: metallb
+    app.kubernetes.io/name: metallb
     component: controller
   name: controller
   namespace: metallb-system
@@ -1716,7 +1716,7 @@ spec:
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: metallb
+      app.kubernetes.io/name: metallb
       component: controller
   template:
     metadata:
@@ -1724,7 +1724,7 @@ spec:
         prometheus.io/port: "7472"
         prometheus.io/scrape: "true"
       labels:
-        app: metallb
+        app.kubernetes.io/name: metallb
         component: controller
     spec:
       containers:
@@ -1790,14 +1790,14 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
-    app: metallb
+    app.kubernetes.io/name: metallb
     component: speaker
   name: speaker
   namespace: metallb-system
 spec:
   selector:
     matchLabels:
-      app: metallb
+      app.kubernetes.io/name: metallb
       component: speaker
   template:
     metadata:
@@ -1805,7 +1805,7 @@ spec:
         prometheus.io/port: "7472"
         prometheus.io/scrape: "true"
       labels:
-        app: metallb
+        app.kubernetes.io/name: metallb
         component: speaker
     spec:
       containers:
@@ -1826,7 +1826,7 @@ spec:
                 fieldRef:
                   fieldPath: status.podIP
             - name: METALLB_ML_LABELS
-              value: app=metallb,component=speaker
+              value: app.kubernetes.io/name=metallb,component=speaker
             - name: METALLB_ML_SECRET_KEY_PATH
               value: /etc/ml_secret_key
           image: quay.io/metallb/speaker:v0.13.10

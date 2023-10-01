@@ -13,7 +13,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   labels:
-    k8s-app: pihole
+    app.kubernetes.io/name: pihole
   name: pihole
   namespace: dns
 spec:
@@ -22,11 +22,11 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      k8s-app: pihole
+      app.kubernetes.io/name: pihole
   template:
     metadata:
       labels:
-        k8s-app: pihole
+        app.kubernetes.io/name: pihole
     spec:
       initContainers:
         - name: copy-pihole-dnsmasq-config
@@ -97,7 +97,7 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    k8s-app: pihole
+    app.kubernetes.io/name: pihole
   ports:
     - name: interface
       port: 80
@@ -115,7 +115,7 @@ spec:
   type: LoadBalancer
   loadBalancerIP: 10.4.16.1 # This needs to be set, everything else we can do dynamically
   selector:
-    k8s-app: pihole
+    app.kubernetes.io/name: pihole
   ports:
     - name: dns
       port: 53
@@ -133,7 +133,7 @@ spec:
   type: LoadBalancer
   loadBalancerIP: 10.4.16.1 # This needs to be set, everything else we can do dynamically
   selector:
-    k8s-app: pihole
+    app.kubernetes.io/name: pihole
   ports:
     - name: dns
       port: 53
