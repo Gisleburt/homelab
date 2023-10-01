@@ -1,0 +1,75 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homepage
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
+spec:
+  revisionHistoryLimit: 3
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: homepage
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: homepage
+    spec:
+      serviceAccountName: homepage
+      automountServiceAccountToken: true
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: true
+      containers:
+        - name: homepage
+          image: "ghcr.io/benphelps/homepage:latest"
+          imagePullPolicy: Always
+          env:
+            - name: HOMEPAGE_VAR_PI_HOLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: homepage
+                  key: PI_HOLE_API_KEY
+            - name: HOMEPAGE_VAR_UNIFI_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: homepage
+                  key: UNIFI_USERNAME
+            - name: HOMEPAGE_VAR_UNIFI_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: homepage
+                  key: UNIFI_PASSWORD
+            - name: HOMEPAGE_VAR_WEATHER_LAT
+              valueFrom:
+                secretKeyRef:
+                  name: homepage
+                  key: WEATHER_LAT
+            - name: HOMEPAGE_VAR_WEATHER_LONG
+              valueFrom:
+                secretKeyRef:
+                  name: homepage
+                  key: WEATHER_LONG
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          volumeMounts:
+            - name: homepage-config
+              mountPath: /app/config
+            - name: homepage-config
+              mountPath: /app/public/images
+            - name: logs
+              mountPath: /app/config/logs
+      volumes:
+        - name: homepage-config
+          configMap:
+            name: homepage
+        - name: homepage-background
+          configMap:
+            name: homepage-background
+        - name: logs
+          emptyDir: {}
