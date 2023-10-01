@@ -16,6 +16,7 @@
   roles:
     - legacy-iptables
     - nfs-common
+    - iscsi
 
   handlers:
     - name: restart pi

@@ -1,0 +1,7 @@
+---
+# tasks file for iscsi
+- name: Install open-iscsi
+  become: true
+  ansible.builtin.package:
+    name: open-iscsi
+    state: present
