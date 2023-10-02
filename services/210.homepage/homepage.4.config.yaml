@@ -41,7 +41,7 @@ data:
 
         - PiHole:
             href: https://pihole.dni.sh/admin
-            namespace: pihole
+            namespace: dns
             app: pihole
             icon: pi-hole
             widget:
