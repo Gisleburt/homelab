@@ -17,6 +17,7 @@
     - legacy-iptables
     - nfs-common
     - iscsi
+    - resolv
 
   handlers:
     - name: restart pi

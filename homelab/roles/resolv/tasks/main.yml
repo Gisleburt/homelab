@@ -1,0 +1,14 @@
+---
+- name: Write /etc/resolv.conf
+  become: yes
+  template:
+    src: templates/resolv.conf
+    dest: /etc/resolv.conf
+
+- name: Ensure resolv.conf is immutable.
+  become: yes
+  file:
+    path: /etc/resolv.conf
+    attr: +i
+  register: resolv_file
+  changed_when: "'i' not in resolv_file.diff.before.attributes"
