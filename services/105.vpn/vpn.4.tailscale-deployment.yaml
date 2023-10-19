@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tailscale
+  namespace: vpn
+  labels:
+    app.kubernetes.io/name: tailscale
+spec:
+  revisionHistoryLimit: 3
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: tailscale
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: tailscale
+    spec:
+      serviceAccountName: tailscale
+      initContainers:
+        # In order to run as a proxy we need to enable IP Forwarding inside
+        # the container. The `net.ipv4.ip_forward` sysctl is not allowlisted
+        # in Kubelet by default.
+        - name: sysctler
+          image: busybox
+          securityContext:
+            privileged: true
+          command: [ "/bin/sh" ]
+          args:
+            - -c
+            - sysctl -w net.ipv4.ip_forward=1 net.ipv6.conf.all.forwarding=1
+          resources:
+            requests:
+              cpu: 1m
+              memory: 1Mi
+      containers:
+        - name: tailscale
+          image: ghcr.io/tailscale/tailscale:stable
+          imagePullPolicy: Always
+          env:
+            - name: TS_AUTH_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: tailscale
+                  key: TS_AUTH_KEY
+            - name: TS_USERSPACE
+              value: "true"
+            - name: TS_AUTH_ONCE
+              value: "true"
+            - name: TS_EXTRA_ARGS
+              value: "--advertise-routes=10.4.0.0/16"
+            - name: TS_ACCEPT_DNS
+              value: "true"
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
