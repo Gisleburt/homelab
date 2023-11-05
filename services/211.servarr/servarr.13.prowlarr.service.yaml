@@ -1,0 +1,17 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: prowlarr
+  namespace: servarr
+  labels:
+    app.kubernetes.io/name: prowlarr
+  annotations:
+    metallb.universe.tf/allow-shared-ip: prowlarr
+spec:
+  selector:
+    app.kubernetes.io/name: prowlarr
+  ports:
+    - name: http
+      port: 9696
+      protocol: TCP

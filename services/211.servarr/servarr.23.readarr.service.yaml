@@ -1,0 +1,17 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: readarr
+  namespace: servarr
+  labels:
+    app.kubernetes.io/name: readarr
+  annotations:
+    metallb.universe.tf/allow-shared-ip: readarr
+spec:
+  selector:
+    app.kubernetes.io/name: readarr
+  ports:
+    - name: http
+      port: 8787
+      protocol: TCP

@@ -1,0 +1,27 @@
+---
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: readarr
+  namespace: servarr
+  labels:
+    app.kubernetes.io/name: readarr
+  annotations:
+    # add an annotation indicating the issuer to use.
+    cert-manager.io/cluster-issuer: cloudflare-issuer-dni-sh
+spec:
+  rules:
+    - host: readarr.dni.sh
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: readarr
+                port:
+                  name: http
+  tls:
+    - hosts:
+        - readarr.dni.sh
+      secretName: reader-dni-sh-certificate

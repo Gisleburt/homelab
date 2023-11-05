@@ -1,0 +1,17 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: qbittorrent
+  namespace: servarr
+  labels:
+    app.kubernetes.io/name: qbittorrent
+  annotations:
+    metallb.universe.tf/allow-shared-ip: qbittorrent
+spec:
+  selector:
+    app.kubernetes.io/name: qbittorrent
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP

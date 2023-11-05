@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: readarr
+  namespace: servarr
+  labels:
+    app.kubernetes.io/name: readarr
+spec:
+  revisionHistoryLimit: 3
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: readarr
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: readarr
+    spec:
+      containers:
+        - name: readarr
+          image: ghcr.io/hotio/readarr:latest
+          imagePullPolicy: Always
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: UMASK
+              value: "002"
+            - name: TZ
+              value: Europe/London
+          ports:
+            - name: http
+              containerPort: 8787
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /app/public/images
+            - name: data
+              mountPath: /data
+            - name: downloads
+              mountPath: /downloads
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: readarr-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: readarr-data
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: qbittorrent-downloads

@@ -74,6 +74,14 @@ data:
             app: ntfy
             icon: ntfy
 
+    - Services:
+        - Readarr:
+            href: https://readarr.dni.sh
+            namespace: servarr
+            app: readarr
+            icon: readarr
+        
+
   widgets.yaml: |
     - kubernetes:
         cluster:
