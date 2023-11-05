@@ -1,14 +1,4 @@
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: dnsmasq-config
-  namespace: dns
-data:
-  50-custom-dns.conf: |-
-    address=/dni.sh/10.4.16.5
-
----
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -17,8 +7,7 @@ metadata:
   name: pihole
   namespace: dns
 spec:
-  replicas: 1 # temp
-#  replicas: 2 # because its using php, we'd need to put $_SESSION into a shared store like REDIS
+  replicas: 3
   revisionHistoryLimit: 10
   selector:
     matchLabels:
@@ -87,80 +76,3 @@ spec:
         - name: dnsmasq-config
           configMap:
             name: dnsmasq-config
-
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: pihole-interface
-  namespace: dns
-spec:
-  type: LoadBalancer
-  selector:
-    app.kubernetes.io/name: pihole
-  ports:
-    - name: interface
-      port: 80
-      protocol: TCP
-
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: pihole-dns-udp
-  namespace: dns
-  annotations:
-    metallb.universe.tf/allow-shared-ip: pihole
-spec:
-  type: LoadBalancer
-  loadBalancerIP: 10.4.16.1 # This needs to be set, everything else we can do dynamically
-  selector:
-    app.kubernetes.io/name: pihole
-  ports:
-    - name: dns
-      port: 53
-      protocol: UDP
-
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: pihole-dns-tcp
-  namespace: dns
-  annotations:
-    metallb.universe.tf/allow-shared-ip: pihole
-spec:
-  type: LoadBalancer
-  loadBalancerIP: 10.4.16.1 # This needs to be set, everything else we can do dynamically
-  selector:
-    app.kubernetes.io/name: pihole
-  ports:
-    - name: dns
-      port: 53
-      protocol: TCP
-
----
-kind: Ingress
-apiVersion: networking.k8s.io/v1
-metadata:
-  name: pihole-interface
-  namespace: dns
-  annotations:
-    # add an annotation indicating the issuer to use.
-    cert-manager.io/cluster-issuer: cloudflare-issuer-dni-sh
-spec:
-  rules:
-    - host: pihole.dni.sh
-      http:
-        paths:
-          - pathType: Prefix
-            path: /
-            backend:
-              service:
-                name: pihole-interface
-                port:
-                  number: 80
-  tls:
-    - hosts:
-        - pihole.dni.sh
-      secretName: pihole-dni-sh-certificate

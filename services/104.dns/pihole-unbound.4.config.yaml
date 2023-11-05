@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dnsmasq-config
+  namespace: dns
+data:
+  50-custom-dns.conf: |-
+    address=/dni.sh/10.4.16.5
