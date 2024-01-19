@@ -24,9 +24,9 @@ metadata:
   namespace: dns
   annotations:
     metallb.universe.tf/allow-shared-ip: pihole
+    metallb.universe.tf/loadBalancerIPs: 10.4.16.1
 spec:
   type: LoadBalancer
-  loadBalancerIP: 10.4.16.1 # This needs to be set, everything else we can do dynamically
   selector:
     app.kubernetes.io/name: pihole
   ports:
@@ -42,9 +42,9 @@ metadata:
   namespace: dns
   annotations:
     metallb.universe.tf/allow-shared-ip: pihole
+    metallb.universe.tf/loadBalancerIPs: 10.4.16.1
 spec:
   type: LoadBalancer
-  loadBalancerIP: 10.4.16.1 # This needs to be set, everything else we can do dynamically
   selector:
     app.kubernetes.io/name: pihole
   ports:
