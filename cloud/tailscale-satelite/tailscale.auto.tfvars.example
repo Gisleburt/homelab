@@ -1,1 +1,7 @@
-tailscale_auth_key = "<insert key here>"
+ssh_public_key = "<insert ssh_public_key>"
+
+tailscale_auth_key = "<insert tailscale_auth_key>"
+
+oracle_ocid                = "<insert oracle_ocid>"
+oracle_availability_domain = "<insert oracle_availability_domain>"
+oracle_image_id            = "<insert oracle_image_id>"
