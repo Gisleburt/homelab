@@ -6,6 +6,7 @@ terraform {
   }
 }
 
+variable "ssh_public_key" {}
 variable "tailscale_auth_key" {}
 variable "oracle_ocid" {}
 variable "oracle_availability_domain" {}
@@ -18,31 +19,60 @@ provider "oci" {
 }
 
 resource "oci_core_vcn" "tailscale_network" {
+  display_name = "Tailscale Network"
+
   dns_label      = "tailscale"
   cidr_blocks    = ["10.0.0.0/16"]
   compartment_id = var.oracle_ocid
-  display_name   = "Tailscale Network"
+}
+
+resource "oci_core_internet_gateway" "tailscale_gateway" {
+  display_name = "Tailscale Gateway"
+
+  compartment_id = var.oracle_ocid
+  vcn_id         = oci_core_vcn.tailscale_network.id
 }
 
 resource "oci_core_subnet" "tailscale_subnet" {
+  display_name = "Tailscale Subnet"
+
   compartment_id = var.oracle_ocid
-  vcn_id = oci_core_vcn.tailscale_network.id
-  cidr_block    = "10.0.0.0/16"
+  vcn_id         = oci_core_vcn.tailscale_network.id
+  cidr_block     = "10.0.0.0/16"
+}
+
+resource "oci_core_security_list" "tailscale_security_list" {
+  display_name = "Tailscale Security List"
+
+  compartment_id = var.oracle_ocid
+  vcn_id         = oci_core_vcn.tailscale_network.id
+
+  ingress_security_rules {
+    description = "Allow UDP 41641"
+    protocol    = 17
+    source      = "0.0.0.0/0"
+    stateless   = true
+    udp_options {
+      min = 41641
+      max = 41641
+    }
+  }
 }
 
 resource "oci_core_instance" "tailscale_instance" {
   display_name = "Tailscale Node"
-  
+
   availability_domain = var.oracle_availability_domain
-  compartment_id = var.oracle_ocid
-  shape = "VM.Standard.E2.1.Micro"
+  compartment_id      = var.oracle_ocid
+  shape               = "VM.Standard.E2.1.Micro"
 
   metadata = {
-    user_data = base64encode(templatefile("tailscale.tftpl", { tailscale_auth_key = var.tailscale_auth_key }))
+    ssh_authorized_keys = var.ssh_public_key
+    user_data           = base64encode(templatefile("tailscale.tftpl", { tailscale_auth_key = var.tailscale_auth_key }))
   }
 
   source_details {
-    source_id = var.oracle_image_id
+    source_id   = var.oracle_image_id
     source_type = "image"
   }
 
@@ -51,8 +81,8 @@ resource "oci_core_instance" "tailscale_instance" {
   }
 
   agent_config {
-    are_all_plugins_disabled = true
-    is_management_disabled = true
-    is_monitoring_disabled = true
+    are_all_plugins_disabled = false
+    is_management_disabled   = false
+    is_monitoring_disabled   = false
   }
 }
