@@ -33,12 +33,21 @@ resource "oci_core_internet_gateway" "tailscale_gateway" {
   vcn_id         = oci_core_vcn.tailscale_network.id
 }
 
-resource "oci_core_subnet" "tailscale_subnet" {
-  display_name = "Tailscale Subnet"
+resource "oci_core_route_table" "tailscale_route_table" {
+  display_name = "Tailscale Route Table"
 
   compartment_id = var.oracle_ocid
   vcn_id         = oci_core_vcn.tailscale_network.id
-  cidr_block     = "10.0.0.0/16"
+
+  route_rules {
+    #Required
+    network_entity_id = oci_core_internet_gateway.tailscale_gateway.id
+
+    #Optional
+    description = "Anywhere"
+    destination = "0.0.0.0/0"
+    destination_type = "CIDR_BLOCK"
+  }
 }
 
 resource "oci_core_security_list" "tailscale_security_list" {
@@ -57,6 +66,38 @@ resource "oci_core_security_list" "tailscale_security_list" {
       max = 41641
     }
   }
+}
+
+resource "oci_core_security_list" "ssh_security_list" {
+  display_name = "SSH Security List"
+
+  compartment_id = var.oracle_ocid
+  vcn_id         = oci_core_vcn.tailscale_network.id
+
+  ingress_security_rules {
+    description = "Allow TCP 22"
+    protocol    = 6
+    source      = "0.0.0.0/0"
+    stateless   = true
+    tcp_options {
+      min = 22
+      max = 22
+    }
+  }
+}
+
+resource "oci_core_subnet" "tailscale_subnet" {
+  display_name = "Tailscale Subnet"
+
+  compartment_id = var.oracle_ocid
+  vcn_id         = oci_core_vcn.tailscale_network.id
+  cidr_block     = "10.0.0.0/16"
+  route_table_id = oci_core_route_table.tailscale_route_table.id
+
+  security_list_ids = [
+    oci_core_security_list.tailscale_security_list.id,
+    oci_core_security_list.ssh_security_list.id
+  ]
 }
 
 resource "oci_core_instance" "tailscale_instance" {

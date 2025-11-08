@@ -10,6 +10,8 @@ runcmd:
   # and replace the placeholder below
   - ['tailscale', 'up', '--auth-key=${tailscale_auth_key}']
   # (Optional) Include this line to make this node available over Tailscale SSH
-  - ['tailscale', 'set', '--ssh']
+  # - ['tailscale', 'set', '--ssh']
   # (Optional) Include this line to configure this machine as an exit node
   - ['tailscale', 'set', '--advertise-exit-node']
+  # Manually set the name of the node
+  - ['tailscale', 'set', '--hostname=oracle-satelite-ch']
