@@ -40,13 +40,11 @@ resource "oci_core_route_table" "tailscale_route_table" {
   vcn_id         = oci_core_vcn.tailscale_network.id
 
   route_rules {
-    #Required
-    network_entity_id = oci_core_internet_gateway.tailscale_gateway.id
+    description = "Allow connection to/from anywhere on the internet"
 
-    #Optional
-    description = "Anywhere"
-    destination = "0.0.0.0/0"
-    destination_type = "CIDR_BLOCK"
+    network_entity_id = oci_core_internet_gateway.tailscale_gateway.id
+    destination       = "0.0.0.0/0"
+    destination_type  = "CIDR_BLOCK"
   }
 }
 
@@ -57,8 +55,8 @@ resource "oci_core_security_list" "tailscale_security_list" {
   vcn_id         = oci_core_vcn.tailscale_network.id
 
   ingress_security_rules {
-    description = "Allow UDP 41641"
-    protocol    = 17
+    description = "Allow UDP 41641 for Tailscale"
+    protocol    = 17 # UDP
     source      = "0.0.0.0/0"
     stateless   = true
     udp_options {
@@ -75,8 +73,8 @@ resource "oci_core_security_list" "ssh_security_list" {
   vcn_id         = oci_core_vcn.tailscale_network.id
 
   ingress_security_rules {
-    description = "Allow TCP 22"
-    protocol    = 6
+    description = "Allow TCP 22 for SSH"
+    protocol    = 6 # TCP
     source      = "0.0.0.0/0"
     stateless   = true
     tcp_options {
@@ -91,7 +89,7 @@ resource "oci_core_subnet" "tailscale_subnet" {
 
   compartment_id = var.oracle_ocid
   vcn_id         = oci_core_vcn.tailscale_network.id
-  cidr_block     = "10.0.0.0/16"
+  cidr_block     = "10.0.1.0/24"
   route_table_id = oci_core_route_table.tailscale_route_table.id
 
   security_list_ids = [
@@ -109,7 +107,7 @@ resource "oci_core_instance" "tailscale_instance" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data           = base64encode(templatefile("tailscale.tftpl", { tailscale_auth_key = var.tailscale_auth_key }))
+    # user_data           = base64encode(templatefile("tailscale.tftpl", { tailscale_auth_key = var.tailscale_auth_key }))
   }
 
   source_details {
