@@ -41,15 +41,15 @@
         reboot_timeout: 120
 
 ###
-- name: k8s-master
-  hosts: masters
+- name: k8s-server
+  hosts: servers
 
   roles:
-    - k3s-master
+    - k3s-server
 
 ###
-- name: k8s-node
-  hosts: nodes
+- name: k8s-agent
+  hosts: agents
 
   roles:
-    - k3s-node
+    - k3s-agent

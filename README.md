@@ -37,21 +37,21 @@ to comment out the `poe` role in the ansible setup.
 3. Run the prepare-host.sh file in the `prepare` folder with the IP address of the pi, the new
    hostname and the location of your ssh public key. Eg
    ```
-   ./prepare/prepare-host.sh 10.4.0.100 k8s-master-100 ~/.ssh/id_rsa
+   ./prepare/prepare-host.sh 10.4.0.100 k8s-server-100 ~/.ssh/id_rsa
    ```
 4. Finally, you will need to create a `hosts` file in this directory. This is ignored by git, but
    it should look like the following, but change your IP addresses and keyfile name as required:
    ```ini
-   [masters]
+   [servers]
    10.4.0.100
    
-   [nodes]
+   [agents]
    10.4.0.101
    10.4.0.102
    
    [k8s:children]
-   masters
-   nodes
+   servers
+   agents
    
    [storage_provider]
    10.4.0.101
@@ -63,7 +63,7 @@ to comment out the `poe` role in the ansible setup.
    ```
 
 > **A Note on IP Addresses:** This playbook assumes your homelab will sit on a 10.4.0.0/16 network.
-> Specifically, the master will be on 10.4.0.100, nodes will build up after that, eg, 10.4.0.101,
+> Specifically, the server will be on 10.4.0.100, nodes will build up after that, eg, 10.4.0.101,
 > 102, etc.
 > 
 > Load balancers will be configured through MetalLB to work on addresses 10.4.16.0/24
@@ -74,8 +74,8 @@ Make commands will use empty files in `build/` to keep track of changes
 
 ### `make build/cluster`
 
-The only cammand you'll really need, once the [Preparation](#Preparation) steps are complete. It
-will set up the PoE hat, remove the swap file, and install the appropriate services. Finally it
+The only command you'll really need, once the [Preparation](#Preparation) steps are complete. It
+will set up the PoE hat, remove the swap file, and install the appropriate services. Finally, it
 will copy a `k3s-config.yaml` file to the root of this project (`.gitignore`d) so that you can
 connect to the cluster with kubectl (see below).
 

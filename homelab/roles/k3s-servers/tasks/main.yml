@@ -1,5 +1,5 @@
 ---
-# tasks file for k3s-master
+# tasks file for k3s-server
 - name: Download
   get_url:
     dest: ~/k3s
@@ -15,7 +15,7 @@
   tags:
     - always
 
-- name: start master
+- name: start server
   shell: ~/k3s server --disable servicelb
   async: 10
   poll: 0

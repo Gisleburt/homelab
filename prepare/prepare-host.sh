@@ -4,9 +4,9 @@ set -eufo pipefail
 SSH_USER=pi
 
 HOST_TYPE=$1
-HOST_TYPE_REGEX='^(master)|(node)$'
+HOST_TYPE_REGEX='^(server)|(agent)$'
 if ! [[ $HOST_TYPE =~ $HOST_TYPE_REGEX ]] ; then
-  echo "error: first parameter should be either 'master' or 'node'" >&2; exit 1
+  echo "error: first parameter should be either 'server' or 'agent'" >&2; exit 1
 fi
 
 IP=$2

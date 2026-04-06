@@ -1,5 +1,5 @@
 ---
-# tasks file for k3s-nodes
+# tasks file for k3s-agents
 - name: Download
   get_url:
     dest: ~/k3s
@@ -14,7 +14,7 @@
   tags:
     - always
 
-- name: start nodes
+- name: start agents
   shell: ~/k3s agent --disable=servicelb --server https://10.4.0.100:6443 --token {{ hostvars['10.4.0.100']['node_token'] }} &
   tags:
     - always

@@ -10,7 +10,7 @@ build/ansible: tools/ansible/*
 	@touch build/ansible
 
 ansible.test: build/ansible
-	@echo Pinging all k8s masters and nodes
+	@echo Pinging all k8s server nodes and agent nodes
 	@docker run --rm \
 	  -v ~/.ssh:/root/.ssh \
 	  -v "${PWD}:/ansible" \
