@@ -14,8 +14,8 @@
         upgrade: safe
 
   roles:
-    - resolv
-    - legacy-iptables
+#    - resolv
+#    - legacy-iptables
     - nfs-common
     - iscsi
 
@@ -30,8 +30,8 @@
   hosts: pis
 
   roles:
-    - swapless
-    - poe
+#    - swapless
+#    - poe
     - cgroups
 
   handlers:
@@ -41,11 +41,18 @@
         reboot_timeout: 120
 
 ###
-- name: k8s-server
-  hosts: servers
+- name: k8s-primary-server
+  hosts: primary_server
 
   roles:
-    - k3s-server
+    - k3s-primary-server
+
+###
+- name: k8s-secondary-server
+  hosts: secondary_servers
+
+  roles:
+    - k3s-secondary-server
 
 ###
 - name: k8s-agent

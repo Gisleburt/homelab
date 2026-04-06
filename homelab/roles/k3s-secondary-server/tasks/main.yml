@@ -1,0 +1,31 @@
+---
+# tasks file for k3s-server
+- name: Download
+  get_url:
+    dest: ~/k3s
+    url: https://get.k3s.io
+    force: true
+  tags:
+    - always
+
+- name: Set execute permission
+  file:
+    path: ~/k3s
+    mode: u+x
+  tags:
+    - always
+
+#- name: Print the ip address
+#  debug:
+#    msg: "The ip address is {{ hostvars[groups['primary_server'][0]]['ip_address'] }}"
+#
+#- name: Print the token
+#  debug:
+#    msg: "The token is {{ hostvars[groups['primary_server'][0]]['node_token'] | b64decode }}"
+
+- name: start server
+  shell: ~/k3s server --disable servicelb --server https://{{ hostvars[groups['primary_server'][0]]['ip_address'] }}:6443 --token {{ hostvars[groups['primary_server'][0]]['node_token'] | b64decode }}
+  async: 10
+  poll: 0
+  tags:
+    - always

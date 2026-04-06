@@ -16,7 +16,7 @@
     - always
 
 - name: start server
-  shell: ~/k3s server --disable servicelb
+  shell: ~/k3s server --disable servicelb --cluster-init
   async: 10
   poll: 0
   tags:
@@ -37,9 +37,15 @@
   tags:
     - always
 
-- name: Save contents
+- name: Save token
   set_fact:
     node_token: "{{ node_token['content'] }}"
+  tags:
+    - always
+
+- name: Save ip address
+  set_fact:
+    ip_address: "{{ inventory_hostname }}"
   tags:
     - always
 
@@ -48,7 +54,7 @@
   replace:
     path: /etc/rancher/k3s/k3s.yaml
     regexp: '127\.0\.0\.1'
-    replace: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+    replace: "{{ inventory_hostname }}"
 
 - name: Get config
   become: yes

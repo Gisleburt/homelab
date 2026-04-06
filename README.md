@@ -32,34 +32,52 @@ to comment out the `poe` role in the ansible setup.
    
 ### Once you have connected your Pis to the switch
 
-1. Make sure that your Pis have been assigned static IP addresses by your router
-2. Make a new ssh key file without a password, you'll use this in the next step 
-3. Run the prepare-host.sh file in the `prepare` folder with the IP address of the pi, the new
-   hostname and the location of your ssh public key. Eg
+1. Make sure that your Pis have been assigned static IP addresses by your router 
+2. Run the prepare-host.sh file in the `prepare` folder with username and host for each node
    ```
-   ./prepare/prepare-host.sh 10.4.0.100 k8s-server-100 ~/.ssh/id_rsa
+   ./prepare/prepare-host.sh daniel 10.4.0.100
+   ```
+   Note: This will create a new ssh key in `$PWD/.ssh` which will be shared with tools like
+   ansible. This directory will also be ignored by git but the keyfile is not password protected
+   so take care.
+3. Optional: You may need to create a `$PWD/.ssh/config`. Eg:
+   ```
+   Host 10.4.*
+   StrictHostKeyChecking no
+   UserKnownHostsFile=/dev/null
+   IdentityFile ~/.ssh/homelab
+   IdentitiesOnly yes
+   
+   Host rpi-*
+   StrictHostKeyChecking no
+   UserKnownHostsFile=/dev/null
+   IdentityFile ~/.ssh/homelab
+   IdentitiesOnly yes
    ```
 4. Finally, you will need to create a `hosts` file in this directory. This is ignored by git, but
    it should look like the following, but change your IP addresses and keyfile name as required:
    ```ini
-   [servers]
+   [primary_server]
    10.4.0.100
+   
+   [secondary_servers]
+   # Add more servers here for High Availability
    
    [agents]
    10.4.0.101
    10.4.0.102
    
    [k8s:children]
-   servers
+   primary_server
+   secondary_servers
    agents
-   
+
    [storage_provider]
    10.4.0.101
    
    [k8s:vars]
    ansible_ssh_user=pi
-   ansible_ssh_private_key_file=~/.ssh/pi-k8s
-   ansible_python_interpreter=/usr/bin/python3
+   ansible_ssh_private_key_file=~/.ssh/homelab
    ```
 
 > **A Note on IP Addresses:** This playbook assumes your homelab will sit on a 10.4.0.0/16 network.
