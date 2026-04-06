@@ -100,6 +100,9 @@ spec:
       containers:
         - name: nfs-provisioner
           image: gcr.io/k8s-staging-sig-storage/nfs-subdir-external-provisioner:v4.0.2
+          volumeMounts:
+            - name: nfs-client-root
+              mountPath: /persistentvolumes
           imagePullPolicy: Always
           securityContext:
             capabilities:
@@ -108,15 +111,33 @@ spec:
             - name: PROVISIONER_NAME
               value: nfs-provisioner
             - name: NFS_SERVER
-              value: 10.0.147.154
+              value: 10.0.147.151
             - name: NFS_PATH
               value: /homelab
+      volumes:
+        - name: nfs-client-root
+          nfs:
+            server: 10.0.147.151
+            path: /homelab
 
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: nfs-storageclass # IMPORTANT pvc needs to mention this name
+  namespace: storage
+  labels:
+    app.kubernetes.io/name: nfs-provisioner
+provisioner: nfs-provisioner # name must match PROVISIONER_NAME env variable on pod
+parameters:
+  pathPattern: "${.PVC.namespace}/${.PVC.name}"
+  onDelete: retain
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-storageclass-ephemeral # IMPORTANT pvc needs to mention this name
   namespace: storage
   labels:
     app.kubernetes.io/name: nfs-provisioner
