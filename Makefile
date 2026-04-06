@@ -5,22 +5,22 @@ KUBECTL = gisleburt/kubectl
 
 build/ansible: tools/ansible/*
 	@echo Building Docker image
-	@docker build tools/ansible --tag $(ANSIBLE) --no-cache
+	@podman build tools/ansible --tag $(ANSIBLE) --no-cache
 	@mkdir -p build
 	@touch build/ansible
 
 ansible.test: build/ansible
 	@echo Pinging all k8s server nodes and agent nodes
-	@docker run --rm \
-	  -v ~/.ssh:/root/.ssh \
+	@podman run --rm \
+	  -v "${PWD}/.ssh:/root/.ssh" \
 	  -v "${PWD}:/ansible" \
 	  ${ANSIBLE} \
 	  ansible -i hosts -m ping k8s
 
 build/cluster: build/ansible homelab/* homelab/*/* homelab/*/*/* homelab/*/*/*/*
 	@echo Running the playbook
-	@docker run --rm \
-	  -v ~/.ssh:/root/.ssh \
+	@podman run --rm \
+	  -v "${PWD}/.ssh:/root/.ssh" \
 	  -v "${PWD}:/ansible" \
 	  ${ANSIBLE} \
 	  ansible-playbook -i hosts homelab/playbook.yml
@@ -29,7 +29,7 @@ build/cluster: build/ansible homelab/* homelab/*/* homelab/*/*/* homelab/*/*/*/*
 
 build/kubectl: tools/kubectl/*
 	@echo Building kubectl docker image
-	@docker build tools/kubectl --tag $(KUBECTL) --no-cache
+	@podman build tools/kubectl --tag $(KUBECTL) --no-cache
 	@mkdir -p build
 	@touch build/kubectl
 
@@ -47,13 +47,13 @@ start/dashboard: build/dashboard
 
 start/gitlab-runner: build/kubectl
 	@echo Starting github runner
-	@docker run --rm -it \
+	@podman run --rm -it \
       -v "${PWD}/k3s-config.yaml":/root/.kube/config \
       -v "${PWD}":/home \
       $(KUBECTL) \
         kubectl apply -f services-helm/gitlab-runner/stuff-gitlab-doesnt-configure.yaml
 
-	@docker run --rm -it \
+	@podman run --rm -it \
 	  -v "${PWD}/k3s-config.yaml":/root/.kube/config \
 	  -v "${PWD}/tools/helm-cache":/root/.cache/helm \
 	  -v "${PWD}":/home \
@@ -68,7 +68,7 @@ start/gitlab-runner: build/kubectl
 	      gitlab/gitlab-runner"
 
 restart/gitlab-runner:
-	@docker run --rm -it \
+	@podman run --rm -it \
 	  -v "${PWD}/k3s-config.yaml":/root/.kube/config \
 	  -v "${PWD}/tools/helm-cache":/root/.cache/helm \
 	  -v "${PWD}":/home \
@@ -83,12 +83,12 @@ restart/gitlab-runner:
 	      gitlab/gitlab-runner"
 
 stop/gitlab-runner:
-	@docker run --rm -it \
+	@podman run --rm -it \
 	  -v "${PWD}/k3s-config.yaml":/root/.kube/config \
 	  -v "${PWD}":/home \
 	  $(KUBECTL) \
 		helm delete --namespace gitlab gitlab-runner
-	@docker run --rm -it \
+	@podman run --rm -it \
       -v "${PWD}/k3s-config.yaml":/root/.kube/config \
       -v "${PWD}":/home \
       $(KUBECTL) \
