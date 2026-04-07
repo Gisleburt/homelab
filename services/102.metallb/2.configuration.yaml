@@ -1,3 +1,4 @@
+# Mote: If this config fails when setting up MetalLB, wait a moment and try again
 ---
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
