@@ -112,3 +112,21 @@ automatically but `build/cluster` so there is no need to run it separately.
 Creates a kubectl that exists inside of docker, so that you don't need to install it locally / mess
 with your locally installed kubectl. When you use the aliased version of kubectl, it will share
 the k3s-config.yaml file in the root of this project directory to connect to the k3s cluser. 
+
+## Kubernetes
+
+When applying kubernetes configurations, do them in numeric order.
+
+Some configurations may error because resource types don't exist, however, if you wait a moment and reapply the resource
+it should be fine.
+
+See below for specific problems you may run into
+
+### [100.nfs-provisioner](services/100.nfs-provisioner)
+
+Make sure that the `storage.nfs-tester` pod starts correctly before moving on. If it does, you can delete the
+deployment. If it doesn't, describe the pod to look for errors that might indicate the storage provider is not correctly
+configured. The most likely reason is that the IP address for the NFS server is incorrect. Note it must be changed in
+two place, the volume mount on the provider, and the address in the environment.
+
+> ToDo: Can we make the volume mount address come from a ConfigMap?

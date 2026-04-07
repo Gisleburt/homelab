@@ -1,3 +1,4 @@
+# Mote: If this config fails when setting up CertManager, wait a moment and try again
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
