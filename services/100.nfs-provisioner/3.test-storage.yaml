@@ -6,7 +6,7 @@ metadata:
   name: test-claim
   namespace: storage
 spec:
-  storageClassName: nfs-storageclass
+  storageClassName: nfs-storageclass-ephemeral
   accessModes:
     - ReadWriteOnce
   resources:
@@ -33,6 +33,13 @@ spec:
       labels:
         app.kubernetes.io/name: nfs-tester
     spec:
+      initContainers:
+        - name: init-files
+          image: busybox:1.28
+          command: ["sh", "-c", "touch /test-area/test-file"]
+          volumeMounts:
+            - mountPath: /test-area
+              name: test-claim
       containers:
         - name: nfs-tester
           image: alpine
