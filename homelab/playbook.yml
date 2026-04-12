@@ -15,7 +15,7 @@
 
   roles:
 #    - resolv
-#    - legacy-iptables
+    - legacy-iptables
     - nfs-common
     - iscsi
 

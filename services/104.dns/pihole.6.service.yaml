@@ -6,7 +6,6 @@ metadata:
   namespace: dns
   annotations:
     metallb.io/allow-shared-ip: pihole
-    metallb.io/loadBalancerIPs: 10.4.16.1
     traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
     traefik.ingress.kubernetes.io/service.sticky.cookie.name: "pihole"
 spec:
