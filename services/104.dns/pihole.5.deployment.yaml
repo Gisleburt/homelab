@@ -1,0 +1,58 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app.kubernetes.io/name: pihole
+  name: pihole
+  namespace: dns
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: pihole
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: pihole
+    spec:
+      containers:
+        - name: pihole
+          image: pihole/pihole:2026.04.0
+          ports:
+            - name: interface
+              containerPort: 80
+              protocol: TCP
+            - name: dns-tcp
+              containerPort: 53
+              protocol: TCP
+            - name: dns-udp
+              containerPort: 53
+              protocol: UDP
+          env:
+            - name: TZ
+              value: Europe/London
+            - name: FTLCONF_webserver_api_password
+              valueFrom:
+                secretKeyRef:
+                  name: pihole-password
+                  key: password
+                  optional: false
+            - name: FTLCONF_dns_upstreams
+              valueFrom:
+                configMapKeyRef:
+                  name: pihole-config
+                  key: dns_upstreams
+            - name: FTLCONF_misc_dnsmasq_lines
+              valueFrom:
+                configMapKeyRef:
+                  name: pihole-config
+                  key: misc_dnsmasq_lines
+          volumeMounts:
+            - mountPath: /etc/pihole
+              name: pihole
+      volumes:
+        - name: pihole
+          persistentVolumeClaim:
+            claimName: pihole

@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pihole-config
+  namespace: dns
+data:
+  dns_upstreams: 1.1.1.1;1.0.0.1;208.67.222.222;8.8.8.8;8.8.4.4
+  misc_dnsmasq_lines: "address=/dni.sh/10.4.16.1"

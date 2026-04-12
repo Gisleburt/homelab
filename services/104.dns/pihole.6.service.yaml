@@ -5,6 +5,8 @@ metadata:
   name: pihole-interface
   namespace: dns
   annotations:
+    metallb.io/allow-shared-ip: pihole
+    metallb.io/loadBalancerIPs: 10.4.16.1
     traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
     traefik.ingress.kubernetes.io/service.sticky.cookie.name: "pihole"
 spec:
@@ -23,8 +25,8 @@ metadata:
   name: pihole-dns-udp
   namespace: dns
   annotations:
-    metallb.universe.tf/allow-shared-ip: pihole
-    metallb.universe.tf/loadBalancerIPs: 10.4.16.1
+    metallb.io/allow-shared-ip: pihole
+    metallb.io/loadBalancerIPs: 10.4.16.1
 spec:
   type: LoadBalancer
   selector:
@@ -41,8 +43,8 @@ metadata:
   name: pihole-dns-tcp
   namespace: dns
   annotations:
-    metallb.universe.tf/allow-shared-ip: pihole
-    metallb.universe.tf/loadBalancerIPs: 10.4.16.1
+    metallb.io/allow-shared-ip: pihole
+    metallb.io/loadBalancerIPs: 10.4.16.1
 spec:
   type: LoadBalancer
   selector:
